@@ -2,24 +2,20 @@ package song.processing;
 
 import org.vamp_plugins.Plugin;
 import org.vamp_plugins.PluginLoader;
+import song.processing.utils.Host;
 
-import java.util.Arrays;
 
 public class Main {
 
     public static void main(String[] args) {
+
         try {
-
-
-            System.out.println("Plugins path: " + Arrays.toString(PluginLoader.getInstance().getPluginPath()));
-            System.out.println("Plugins list: " + Arrays.toString(PluginLoader.getInstance().listPlugins()));
-
             Plugin pyin = PluginLoader.getInstance().loadPlugin("pyin:pyin", 1, 1);
 
-            // Do the stuff
-            System.out.println("Pyin desc: " + pyin.getDescription());
-
-            pyin.dispose();
+            System.out.println(pyin.getDescription());
+            song.processing.utils.Host host = new Host();
+            host.start("pyin:pyin:notes", "./res/01.wav");
+            System.out.println("done");
         } catch (Exception e) {
             System.err.println(e.toString());
         }
