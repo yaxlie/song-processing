@@ -23,8 +23,6 @@ public class Main {
                 File fileWav = convertMP3toWAV(fileMp3);
                 Host.start("pyin:pyin:notes", fileWav);
             }
-
-            System.out.println("done");
         } catch (Exception e) {
             System.err.println(e.toString());
         }

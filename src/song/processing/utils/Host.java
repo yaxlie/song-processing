@@ -12,37 +12,94 @@ import org.vamp_plugins.ParameterDescriptor;
 import org.vamp_plugins.OutputDescriptor;
 import org.vamp_plugins.Feature;
 import org.vamp_plugins.RealTime;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import java.io.File;
 import java.io.IOException;
 
 public class Host
 {
-    private static void printFeatures(RealTime frameTime, Integer output,
-                                      Map<Integer, List<Feature>> features)
-    {
+    private static void printFeatures(String filename, RealTime frameTime, Integer output,
+                                      Map<Integer, List<Feature>> features) {
+        int midiValue;
+        String xmlFilePath = "./out/" + filename + ".xml";
+
         if (!features.containsKey(output)) return;
 
-        for (Feature f : features.get(output)) {
-            if (f.hasTimestamp) {
-                System.out.print("\tTimestamp: " + f.timestamp);
-            } else {
-                System.out.print("\tFrame time: " + frameTime);
+        System.out.print("\tSaving xml file...");
+        try {
+            // Stuff for xml
+            DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+            Document document = documentBuilder.newDocument();
+
+            Element root = document.createElement(filename);
+            document.appendChild(root);
+
+
+            // processing .wav file data
+            for (Feature f : features.get(output)) {
+                Element note = document.createElement("note");
+
+                if (f.hasTimestamp) {
+                    Element timestamp = document.createElement("timestamp");
+                    timestamp.appendChild(document.createTextNode(String.valueOf(f.timestamp)));
+                    note.appendChild(timestamp);
+                } else {
+                    Element frame = document.createElement("frame");
+                    frame.appendChild(document.createTextNode(String.valueOf(frameTime)));
+                    note.appendChild(frame);
+                }
+                if (f.hasDuration) {
+                    Element duration = document.createElement("duration");
+                    duration.appendChild(document.createTextNode(String.valueOf(f.duration)));
+                    note.appendChild(duration);
+                }
+                for (float v : f.values) {
+
+                    // Zamiana częstotliwości na wartość nuty w midi
+                    // https://stackoverflow.com/questions/27357727/calcute-note-based-on-frequency
+                    midiValue = (int) (Math.round(69 + 12 * (Math.log(v / 440) / Math.log(2))));
+
+                    Element val = document.createElement("value");
+                    val.appendChild(document.createTextNode(String.valueOf(v)));
+                    note.appendChild(val);
+
+                    Element midi = document.createElement("midiValue");
+                    midi.appendChild(document.createTextNode(String.valueOf(midiValue)));
+                    note.appendChild(midi);
+                }
+
+                root.appendChild(note);
+
+                // create the xml file
+                //transform the DOM Object to an XML File
+                TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                Transformer transformer = transformerFactory.newTransformer();
+                DOMSource domSource = new DOMSource(document);
+                StreamResult streamResult = new StreamResult(new File(xmlFilePath));
+
+                transformer.transform(domSource, streamResult);
             }
-            if (f.hasDuration) {
-                System.out.print("\tDuration: " + f.duration);
-            }
-            System.out.print("\tValues:");
-            for (float v : f.values) {
-                System.out.print(" " + v);
-            }
-            System.out.print(" " + f.label);
-            System.out.println("");
+            System.out.println(" OK!");
+        } catch (ParserConfigurationException pce) {
+            pce.printStackTrace();
+        } catch (TransformerException tfe) {
+            tfe.printStackTrace();
         }
     }
 
@@ -73,6 +130,7 @@ public class Host
 
     public static void start(String key, File f )
     {
+        System.out.println("[pYIN] Start processing " + f.getName());
         PluginLoader loader = PluginLoader.getInstance();
 
         String[] keyparts = key.split(":");
@@ -161,7 +219,7 @@ public class Host
                     Map<Integer, List<Feature>>
                             features = p.process(buffers, timestamp);
 
-                    printFeatures(timestamp, outputNumber, features);
+                    printFeatures(f.getName(), timestamp, outputNumber, features);
                 }
 
                 ++block;
@@ -172,10 +230,10 @@ public class Host
 
             RealTime timestamp = RealTime.frame2RealTime
                     (block * blockSize, (int)(rate + 0.5));
-            printFeatures(timestamp, outputNumber, features);
+            printFeatures(f.getName(), timestamp, outputNumber, features);
 
             p.dispose();
-
+            System.out.println("...Done!");
         } catch (java.io.IOException e) {
             System.err.println("Failed to read audio file: " + e.getMessage());
 
