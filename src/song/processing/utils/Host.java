@@ -71,7 +71,7 @@ public class Host
         return frames;
     }
 
-    public static void start(String key, String filename)
+    public static void start(String key, File f )
     {
         PluginLoader loader = PluginLoader.getInstance();
 
@@ -85,7 +85,7 @@ public class Host
         String outputKey = keyparts[2];
 
         try {
-            File f = new File(filename);
+
             AudioInputStream stream = AudioSystem.getAudioInputStream(f);
             AudioFormat format = stream.getFormat();
 
