@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="song-processing:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/song_processing_jar</output-path>
+    <root id="archive" name="song-processing.jar">
+      <element id="module-output" name="song-processing" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/jvamp/jvamp.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/jlayer-1.0.1.jar" path-in-jar="/" />
+      <element id="file-copy" path="$PROJECT_DIR$/lib/jvamp/vamp-jni.dll" />
+    </root>
+  </artifact>
+</component>

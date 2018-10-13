@@ -36,7 +36,7 @@ public class Host
     private static void printFeatures(String filename, RealTime frameTime, Integer output,
                                       Map<Integer, List<Feature>> features) {
         int midiValue;
-        String xmlFilePath = "./out/" + filename + ".xml";
+        String xmlFilePath = filename + ".xml";
 
         if (!features.containsKey(output)) return;
 

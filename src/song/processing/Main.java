@@ -31,7 +31,7 @@ public class Main {
     public static File convertMP3toWAV(File fileMp3) {
         File temp = null;
         try {
-            temp = File.createTempFile(fileMp3.getName().split("\\.")[0], ".wav");
+            temp = File.createTempFile("temp_" + fileMp3.getName().split("\\.")[0], ".wav");
             temp.deleteOnExit();
         } catch (IOException e1) {
             e1.printStackTrace();

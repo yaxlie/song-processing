@@ -23,7 +23,6 @@
         <jarDirectory url="file://$MODULE_DIR$/lib/jvamp" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="jl1.0.1" level="project" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
