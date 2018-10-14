@@ -10,26 +10,26 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="file://$MODULE_DIR$/lib/jvamp" />
+          <root url="jar://$MODULE_DIR$/lib/jlayer-1.0.1.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <NATIVE>
-          <root url="file://$MODULE_DIR$/lib/jvamp" />
-        </NATIVE>
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/lib/jvamp" />
-        </SOURCES>
-        <jarDirectory url="file://$MODULE_DIR$/lib/jvamp" recursive="false" />
-        <jarDirectory url="file://$MODULE_DIR$/lib/jvamp" recursive="false" type="SOURCES" />
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/jlayer-1.0.1.jar!/" />
+          <root url="file://$MODULE_DIR$/lib/jvamp-win" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <NATIVE>
+          <root url="file://$MODULE_DIR$/lib/jvamp-win" />
+        </NATIVE>
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/lib/jvamp-win" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/lib/jvamp-win" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/lib/jvamp-win" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
   </component>

@@ -1,4 +1,5 @@
 *.wav
+*.wav.xml
 *.mp3
 
 # Compiled class file
