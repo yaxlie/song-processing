@@ -1,5 +1,6 @@
 package song.processing.utils;
 
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.vamp_plugins.Feature;
 import org.vamp_plugins.RealTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import song.processing.common.FunctionsEnum;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.AudioInputStream;
@@ -33,7 +35,7 @@ import java.io.IOException;
 
 public class Host
 {
-    private static void printFeatures(String filename, RealTime frameTime, Integer output,
+    private static void printNotes(String filename, RealTime frameTime, Integer output,
                                       Map<Integer, List<Feature>> features) {
         int midiValue;
         String xmlFilePath = filename + ".xml";
@@ -103,6 +105,34 @@ public class Host
         }
     }
 
+    private static void printSmoothedPitch(String filename, RealTime frameTime, Integer output,
+                                   Map<Integer, List<Feature>> features) {
+        if (!features.containsKey(output)) return;
+
+        System.out.print(String.format("\tListing Smoothed Pitch Track to file %s.txt ...\n", filename));
+        try {
+            PrintWriter writer = new PrintWriter(filename + ".txt", "UTF-8");
+            // processing .wav file data
+            for (Feature f : features.get(output)) {
+                if (f.hasTimestamp) {
+                    writer.print(String.format("\n %s ", String.valueOf(f.timestamp)));
+                } else {
+                    writer.print(String.format(" %s ", String.valueOf(frameTime)));
+                }
+                if (f.hasDuration) {
+                    writer.print(String.format(" %s ", String.valueOf(f.duration)));
+                }
+                for (float v : f.values) {
+
+                    writer.print(String.format(" %s ", v));
+                }
+            }
+            System.out.println(" OK!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private static void usage() {
         System.err.println("Usage: host pluginlibrary:plugin:output file.wav");
     }
@@ -128,10 +158,22 @@ public class Host
         return frames;
     }
 
-    public static void start(String key, File f )
+    public static void start(FunctionsEnum function, File f )
     {
+        String key = null;
         System.out.println("[pYIN] Start processing " + f.getName());
         PluginLoader loader = PluginLoader.getInstance();
+
+        switch (function){
+            case NOTES:
+                key = "pyin:pyin:notes";
+                break;
+            case SMOOTHED_PITCH_TRACK:
+                key = "pyin:pyin:smoothedpitchtrack";
+                break;
+//            default:
+//                throw new Exception();
+        }
 
         String[] keyparts = key.split(":");
         if (keyparts.length < 3) {
@@ -219,7 +261,14 @@ public class Host
                     Map<Integer, List<Feature>>
                             features = p.process(buffers, timestamp);
 
-                    printFeatures(f.getName(), timestamp, outputNumber, features);
+                    switch (function){
+                        case NOTES:
+                            printNotes(f.getName(), timestamp, outputNumber, features);
+                            break;
+                        case SMOOTHED_PITCH_TRACK:
+                            printSmoothedPitch("smoothed_" + f.getName(), timestamp, outputNumber, features);
+                            break;
+                    }
                 }
 
                 ++block;
@@ -230,7 +279,14 @@ public class Host
 
             RealTime timestamp = RealTime.frame2RealTime
                     (block * blockSize, (int)(rate + 0.5));
-            printFeatures(f.getName(), timestamp, outputNumber, features);
+            switch (function){
+                case NOTES:
+                    printNotes(f.getName(), timestamp, outputNumber, features);
+                    break;
+                case SMOOTHED_PITCH_TRACK:
+                    printSmoothedPitch("smoothed_" + f.getName(), timestamp, outputNumber, features);
+                    break;
+            }
 
             p.dispose();
             System.out.println("...Done!");
