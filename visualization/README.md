@@ -1,0 +1,1 @@
+*Wizualizacja uzyskanych danych z plików muzycznych.*
