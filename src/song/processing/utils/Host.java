@@ -1,6 +1,7 @@
 package song.processing.utils;
 
 import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Map;
@@ -33,12 +34,17 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
 
-public class Host
-{
+public class Host {
     private static void printNotes(String filename, RealTime frameTime, Integer output,
-                                      Map<Integer, List<Feature>> features) {
+                                   Map<Integer, List<Feature>> features, Path relativePath) throws IOException {
         int midiValue;
-        String xmlFilePath = filename + ".xml";
+        String path = new File(".").getCanonicalPath();
+        String relativePathString = relativePath.toString().split("\\.")[0] + "\\";
+        boolean reateDirectory = new File(path + "\\" + relativePathString + "XML\\").mkdirs();
+
+
+        File xmlFile = new File(path + "\\" + relativePathString + "XML\\" + filename + ".xml");
+
 
         if (!features.containsKey(output)) return;
 
@@ -93,7 +99,7 @@ public class Host
                 TransformerFactory transformerFactory = TransformerFactory.newInstance();
                 Transformer transformer = transformerFactory.newTransformer();
                 DOMSource domSource = new DOMSource(document);
-                StreamResult streamResult = new StreamResult(new File(xmlFilePath));
+                StreamResult streamResult = new StreamResult(xmlFile);
 
                 transformer.transform(domSource, streamResult);
             }
@@ -106,12 +112,16 @@ public class Host
     }
 
     private static void printSmoothedPitch(String filename, RealTime frameTime, Integer output,
-                                   Map<Integer, List<Feature>> features) {
+                                           Map<Integer, List<Feature>> features, Path relativePath) throws IOException {
         if (!features.containsKey(output)) return;
 
         System.out.print(String.format("\tListing Smoothed Pitch Track to file %s.txt ...\n", filename));
+        String path = new File(".").getCanonicalPath();
+        String relativePathString = relativePath.toString().split("\\.")[0] + "\\";
+        boolean fileCreate = new File(path + "\\" + relativePathString + "TXT\\").mkdirs();
+        File file = new File(path + "\\" + relativePathString + "TXT\\" + filename + ".txt");
         try {
-            PrintWriter writer = new PrintWriter(filename + ".txt", "UTF-8");
+            PrintWriter writer = new PrintWriter(file, "UTF-8");
             // processing .wav file data
             for (Feature f : features.get(output)) {
                 if (f.hasTimestamp) {
@@ -139,8 +149,7 @@ public class Host
 
     private static int readBlock(AudioFormat format, AudioInputStream stream,
                                  float[][] buffers)
-            throws java.io.IOException
-    {
+            throws java.io.IOException {
         // 16-bit LE signed PCM only
         int channels = format.getChannels();
         byte[] raw = new byte[buffers[0].length * channels * 2];
@@ -150,7 +159,7 @@ public class Host
         for (int i = 0; i < frames; ++i) {
             for (int c = 0; c < channels; ++c) {
                 int ix = i * channels + c;
-                int ival = (raw[ix*2] & 0xff) | (raw[ix*2 + 1] << 8);
+                int ival = (raw[ix * 2] & 0xff) | (raw[ix * 2 + 1] << 8);
                 float fval = ival / 32768.0f;
                 buffers[c][i] = fval;
             }
@@ -158,13 +167,16 @@ public class Host
         return frames;
     }
 
-    public static void start(FunctionsEnum function, File f )
-    {
+    public static void start(FunctionsEnum function, File f, Path relativePath) {
         String key = null;
         System.out.println("[pYIN] Start processing " + f.getName());
         PluginLoader loader = PluginLoader.getInstance();
 
-        switch (function){
+        String relativePathString = relativePath.toString().split("\\.")[0] + "\\";
+        String[] filenameSplitted = relativePathString.split("\\\\");
+        String filename = filenameSplitted[filenameSplitted.length - 1];
+
+        switch (function) {
             case NOTES:
                 key = "pyin:pyin:notes";
                 break;
@@ -256,17 +268,17 @@ public class Host
                     incomplete = (read < buffers[0].length);
 
                     RealTime timestamp = RealTime.frame2RealTime
-                            (block * blockSize, (int)(rate + 0.5));
+                            (block * blockSize, (int) (rate + 0.5));
 
                     Map<Integer, List<Feature>>
                             features = p.process(buffers, timestamp);
 
-                    switch (function){
+                    switch (function) {
                         case NOTES:
-                            printNotes(f.getName(), timestamp, outputNumber, features);
+                            printNotes(filename, timestamp, outputNumber, features, relativePath);
                             break;
                         case SMOOTHED_PITCH_TRACK:
-                            printSmoothedPitch("smoothed_" + f.getName(), timestamp, outputNumber, features);
+                            printSmoothedPitch("smoothed_" + filename, timestamp, outputNumber, features, relativePath);
                             break;
                     }
                 }
@@ -278,13 +290,13 @@ public class Host
                     features = p.getRemainingFeatures();
 
             RealTime timestamp = RealTime.frame2RealTime
-                    (block * blockSize, (int)(rate + 0.5));
-            switch (function){
+                    (block * blockSize, (int) (rate + 0.5));
+            switch (function) {
                 case NOTES:
-                    printNotes(f.getName(), timestamp, outputNumber, features);
+                    printNotes(filename, timestamp, outputNumber, features, relativePath);
                     break;
                 case SMOOTHED_PITCH_TRACK:
-                    printSmoothedPitch("smoothed_" + f.getName(), timestamp, outputNumber, features);
+                    printSmoothedPitch("smoothed_" + filename, timestamp, outputNumber, features, relativePath);
                     break;
             }
 

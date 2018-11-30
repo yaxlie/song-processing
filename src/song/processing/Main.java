@@ -7,9 +7,13 @@ import song.processing.utils.Host;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.*;
+import java.util.List;
 
 import javazoom.jl.converter.Converter;
 import javazoom.jl.decoder.JavaLayerException;
+
+import static java.util.stream.Collectors.toList;
 
 public class Main {
     private static final boolean smoothed_pitch = true;
@@ -20,14 +24,29 @@ public class Main {
             Plugin pyin = PluginLoader.getInstance().loadPlugin("pyin:pyin", 1, 1);
             System.out.println();
             System.out.println(pyin.getDescription());
-            for (String fileName : args) {
-                File fileMp3 = new File(fileName);
-                File fileWav = convertMP3toWAV(fileMp3);
-                // Host.start("pyin:pyin:Smoothed Pitch Track", fileWav); // zwraca listę dostępnych funkcji
-                Host.start(FunctionsEnum.NOTES, fileWav);
 
-                if(smoothed_pitch){
-                    Host.start(FunctionsEnum.SMOOTHED_PITCH_TRACK, fileWav);
+            List<Path> pathsToCheckList;
+
+            for (String path : args) {
+                if (path.substring(path.length() - 1).equals("\\")) {
+                    path = path.substring(0, path.length() - 1);
+                }
+
+                System.out.println(path);
+                pathsToCheckList = Files.walk(Paths.get(path))
+                        .filter(s -> s.toString().endsWith(".mp3"))
+                        .collect(toList());
+
+                for (Path fileName : pathsToCheckList) {
+                    File fileMp3 = new File(String.valueOf(fileName));
+                    File fileWav = convertMP3toWAV(fileMp3);
+                    Path relativePath = (Paths.get(path)).getParent().relativize(fileName);
+
+                    Host.start(FunctionsEnum.NOTES, fileWav, relativePath);
+
+                    if (smoothed_pitch) {
+                        Host.start(FunctionsEnum.SMOOTHED_PITCH_TRACK, fileWav, relativePath);
+                    }
                 }
 
             }
