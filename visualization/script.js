@@ -1365,6 +1365,7 @@ function transformMitiToArray(midi, beginTime,endTime){
 //set midi dataset 
 midiData = transformMitiToArray(midiFile, beginTime, endTime);
 console.log(midiValues);
+console.log(midiData);
 //filter line
 var line = file.split(" ");
 var lineTemp = line.filter(function(li){
@@ -1460,12 +1461,140 @@ var myChart = new Chart(ctx, {
 		}]
     }
 });
+var activePoint = null;
+
 var yInput = document.getElementById("edit-y");
 var midib = document.getElementById("edit-midi-begin");
 var midie = document.getElementById("edit-midi-end");
 var midiv = document.getElementById("edit-midi-value");
+
+var chartv = document.getElementById("chart-every");
+var chartTimeb = document.getElementById("chart-time-begin");
+var chartTimee = document.getElementById("chart-time-end");
+
+var buttonApply = document.getElementById("apply-changes");
+var overrideMidi = document.getElementById("override-midi");
+
+function applyChanges(){
+	
+}
+
+function deleteMidi(datasetIndex){
+	dataset.splice(datasetIndex,1);
+
+}
+
+function calculateFreqFromMidi(midiValue){
+	if(midiValue >= 0 && midiValue <= 129)
+	var val = ((midiValue-69)/12)
+	return (Math.pow(2, val) * 440);
+}
+
+function appyMidiValue(){
+	if(activePoint){
+		if(activePoint[0] != null){
+			if(midiv.value){
+				var datasetIndex = activePoint[0]._datasetIndex;
+				midiValues[datasetIndex] = midiv.value;
+				var freq = calculateFreqFromMidi(midiv.value);
+				dataset[datasetIndex].data[0].y = freq;
+				dataset[datasetIndex].data[1].y = freq;
+				myChart.update();
+			}
+		}
+	}
+}
+
+function splitMidi(){
+	if(activePoint && activePoint[0]){
+		var datasetIndex = activePoint[0]._datasetIndex;
+		var newMidib = (((parseFloat(midib.value))+ parseFloat(midie.value))/2)
+		var lebel = [
+		{y: dataset[datasetIndex].data[0].y ,x: newMidib},
+		{y: dataset[datasetIndex].data[1].y ,x: dataset[datasetIndex].data[1].x} 
+		]
+		var obj = {data: lebel, pointStyle: "circle",borderColor: "#ac2b2b",fill: false};
+		dataset[datasetIndex].data[1].x = newMidib;
+		dataset.splice( (datasetIndex +1), 0, obj);
+		myChart.update();
+		
+	}
+}
+function addMidiBefore(){
+	if(activePoint && activePoint[0]){
+		var datasetIndex = activePoint[0]._datasetIndex;
+		var lebel = [
+		{y: dataset[datasetIndex].data[0].y ,x: dataset[datasetIndex].data[1].x - 1},
+		{y: dataset[datasetIndex].data[1].y ,x: dataset[datasetIndex].data[0].x}
+		]
+		var obj = {data: lebel, pointStyle: "circle",borderColor: "#ac2b2b",fill: false};
+		dataset.splice( (datasetIndex -1), 0, obj);
+		myChart.update();
+	}
+}
+
+function addMidiAfter(){
+	if(activePoint && activePoint[0]){
+		var datasetIndex = activePoint[0]._datasetIndex;
+		var lebel = [
+		{y: dataset[datasetIndex].data[0].y ,x: dataset[datasetIndex].data[1].x},
+		{y: dataset[datasetIndex].data[1].y ,x: dataset[datasetIndex].data[1].x + 1}
+		]
+		var obj = {data: lebel, pointStyle: "circle",borderColor: "#ac2b2b",fill: false};
+		dataset.splice( (datasetIndex +1), 0, obj);
+		myChart.update();
+	}
+}
+
+function midiTimeValueChanger(datasetIndex){
+	var i = 1;
+	while((datasetIndex - i) >= 0){	
+		if(parseFloat(dataset[datasetIndex - i].data[0].x) > parseFloat(midib.value)){
+			dataset.splice(parseInt(datasetIndex - i),1);
+		}else if(parseFloat(dataset[datasetIndex - i].data[1].x) > parseFloat(midib.value)){
+			dataset[datasetIndex - i].data[1].x = midib.value;
+		}else{
+			break;
+		}
+		i = i + 1;
+	}
+	console.log(datasetIndex);
+	while((datasetIndex + 1) < parseInt(dataset.length)){
+		if(!dataset[datasetIndex + 1].data[0]){
+			break;
+		}
+		if(parseFloat(dataset[parseInt(datasetIndex + 1)].data[0].x) < parseFloat(midie.value)){
+			dataset.splice(parseInt(datasetIndex + 1),1);
+		}else if(parseFloat(dataset[datasetIndex + 1].data[1].x) < parseFloat(midie.value)){
+			dataset[datasetIndex + 1].data[1].x = midie.value;
+			break;
+		}else{
+			break;
+		}
+	}
+	
+}
+
+function applyMidiTime(){
+	if(activePoint){
+		if(midib.value && midie.value){
+			if(parseFloat(midib.value) >= 0 && parseFloat(midie.value) >= 0){
+				if(parseFloat(midib.value) < (parseFloat(midie.value) - 0.01)){
+					var datasetIndex = activePoint[0]._datasetIndex;
+					dataset[datasetIndex].data[0].x = midib.value;
+					dataset[datasetIndex].data[1].x = midie.value;
+					if(overrideMidi.checked){
+						midiTimeValueChanger(datasetIndex);
+					}
+					myChart.update();
+				}
+			}
+		}
+	}
+}
+
 ctx.onclick = function(evt){
-	var activePoint = myChart.getElementAtEvent(evt);
+	activePoint = myChart.getElementAtEvent(evt);
 	var activePoints = myChart.getElementsAtEvent(evt);
 	if(activePoint[0] != null){
 		var datasetIndex = activePoint[0]._datasetIndex;

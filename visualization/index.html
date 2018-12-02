@@ -12,10 +12,21 @@
 		</div>
 		freq:<input id="edit-y" />
 		</br>
-		midi value:<input id="edit-midi-value" />
-		midi begin:<input id="edit-midi-begin" />
-		midi   end:<input id="edit-midi-end" />
+		midi value:<input onchange="appyMidiValue()" id="edit-midi-value" />
+		midi begin:<input onchange="applyMidiTime()" id="edit-midi-begin" />
+		midi   end:<input onchange="applyMidiTime()" id="edit-midi-end" />
+		</br>
+		scale:<input onchange="myFunction()" id="chart-every" value="Out of order" />
+		time begin:<input onchange="myFunction()" id="chart-time-begin" value="Out of order"/>
+		time   end: <input onchange="myFunction()" id="chart-time-end" value="Out of order"/> 
+		<button id="apply-changes" onclick="ds()">Revert last chnge</button>
+		</br>
+		Override midi:<input type="checkbox" id="override-midi">
 		<script src="script.js"></script>
-		
+		</br>
+		</br>
+		<button id="apply-changes" onclick="addMidiBefore()">Add Midi Before</button>
+		<button id="apply-changes" onclick="addMidiAfter()">Add Midi After</button>
+		<button id="apply-changes" onclick="splitMidi()">Split Midi</button>
 	</body>
 </html>
