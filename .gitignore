@@ -92,3 +92,6 @@ hs_err_pid*
 
 # Android studio 3.1+ serialized cache file
 *.idea/caches/build_file_checksums.ser
+.idea/
+data_generator/.idea/libraries/
+data_generator/.idea/workspace.xml
