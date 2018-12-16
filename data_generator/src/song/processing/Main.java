@@ -42,10 +42,10 @@ public class Main {
                     File fileWav = convertMP3toWAV(fileMp3);
                     Path relativePath = (Paths.get(path)).getParent().relativize(fileName);
 
-                    Host.start(FunctionsEnum.NOTES, fileWav, relativePath);
+                    Host.start(FunctionsEnum.NOTES, fileWav, relativePath, fileMp3);
 
                     if (smoothed_pitch) {
-                        Host.start(FunctionsEnum.SMOOTHED_PITCH_TRACK, fileWav, relativePath);
+                        Host.start(FunctionsEnum.SMOOTHED_PITCH_TRACK, fileWav, relativePath,fileMp3);
                     }
                 }
 

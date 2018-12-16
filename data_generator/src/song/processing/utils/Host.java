@@ -1,10 +1,10 @@
 package song.processing.utils;
 
-import java.io.PrintWriter;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.TreeMap;
-import java.util.Map;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.List;
 import java.lang.RuntimeException;
 
@@ -32,20 +32,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import java.io.File;
-import java.io.IOException;
-
 public class Host {
+
+
     private static void printNotes(String filename, RealTime frameTime, Integer output,
-                                   Map<Integer, List<Feature>> features, Path relativePath) throws IOException {
+                                   Map<Integer, List<Feature>> features, File xmlFile)  {
         int midiValue;
-        String path = new File(".").getCanonicalPath();
-        String relativePathString = relativePath.toString().split("\\.")[0] + "\\";
-        boolean reateDirectory = new File(path + "\\" + relativePathString + "XML\\").mkdirs();
-
-
-        File xmlFile = new File(path + "\\" + relativePathString + "XML\\" + filename + ".xml");
-
 
         if (!features.containsKey(output)) return;
 
@@ -117,14 +109,11 @@ public class Host {
     }
 
     private static void printSmoothedPitch(String filename, RealTime frameTime, Integer output,
-                                           Map<Integer, List<Feature>> features, Path relativePath) throws IOException {
+                                           Map<Integer, List<Feature>> features, File file) throws IOException {
         if (!features.containsKey(output)) return;
 
         System.out.print(String.format("\tListing Smoothed Pitch Track to file %s.txt ...\n", filename));
-        String path = new File(".").getCanonicalPath();
-        String relativePathString = relativePath.toString().split("\\.")[0] + "\\";
-        boolean fileCreate = new File(path + "\\" + relativePathString + "TXT\\").mkdirs();
-        File file = new File(path + "\\" + relativePathString + "TXT\\" + filename + ".txt");
+
         try {
             PrintWriter writer = new PrintWriter(file, "UTF-8");
             // processing .wav file data
@@ -172,21 +161,104 @@ public class Host {
         return frames;
     }
 
-    public static void start(FunctionsEnum function, File f, Path relativePath) {
+
+    private static void createPropertiesAndRdf(String filename,Path relativePathString) throws IOException, ParserConfigurationException, TransformerException {
+
+        Properties props = new Properties();
+        OutputStream output = null;
+
+        String[] relativePathSplitted = relativePathString.toString().split("\\\\");
+        String tempPath="";
+        boolean publicationRoot = true;
+
+        for (String s : relativePathSplitted) {
+            tempPath = tempPath + s + "\\";
+            output = new FileOutputStream(tempPath + "\\" + "publication.properties");
+
+            props.setProperty("publication.metadataFile", "metadata.rdf");
+            props.setProperty("publication.name", filename);
+
+            if (publicationRoot) {
+                props.setProperty("publication.destination.directoryId", "1044");
+                //  props.setProperty("publication.collections", "6");
+                props.setProperty("publication.published", "true");
+
+            }
+            System.out.println(tempPath);
+            System.out.println(relativePathString);
+            if (tempPath.equals(relativePathString.toString() + "\\")) {
+                props.setProperty("publication.mainFile", filename + ".mp3");
+            }
+
+            publicationRoot = false;
+            props.store(output, null);
+
+
+            DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+            Document document = documentBuilder.newDocument();
+
+            Element root = document.createElement("RDF");
+            document.appendChild(root);
+
+
+            Element description = document.createElement("Description");
+            root.appendChild(description);
+
+            Element title = document.createElement("Title");
+            title.appendChild(document.createTextNode(s));
+
+            description.appendChild(title);
+
+            File rdfFile = new File(tempPath + "\\" + "metadata.rdf");
+
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource domSource = new DOMSource(document);
+            StreamResult streamResult = new StreamResult(rdfFile);
+
+            transformer.transform(domSource, streamResult);
+
+        }
+
+
+    }
+
+
+    public static void start(FunctionsEnum function, File f, Path relativePath, File fileMp3) throws IOException, ParserConfigurationException, TransformerException {
         String key = null;
         System.out.println("[pYIN] Start processing " + f.getName());
         PluginLoader loader = PluginLoader.getInstance();
+        String path;
+        File xmlFile = null;
+        File fileSmoothed = null;
 
         String relativePathString = relativePath.toString().split("\\.")[0] + "\\";
         String[] filenameSplitted = relativePathString.split("\\\\");
         String filename = filenameSplitted[filenameSplitted.length - 1];
 
+        path = new File(".").getCanonicalPath();
+        relativePathString = relativePath.toString().split("\\.")[0] + "\\";
+        System.out.println(relativePathString);
+        boolean createDirectory = new File(path + "\\" + relativePathString).mkdirs();
+
+        File newmp3= new File (path + "\\" + relativePathString + filename + ".mp3"  );
+        if (!newmp3.exists()) {
+            Files.copy(fileMp3.toPath(),newmp3.toPath());
+        }
+        createPropertiesAndRdf(filename, Paths.get(relativePathString));
+
+
         switch (function) {
             case NOTES:
                 key = "pyin:pyin:notes";
+
+                xmlFile = new File(path + "\\" + relativePathString + filename + ".xml");
                 break;
             case SMOOTHED_PITCH_TRACK:
                 key = "pyin:pyin:smoothedpitchtrack";
+
+                fileSmoothed = new File(path + "\\" + relativePathString +  filename + ".txt");
                 break;
 //            default:
 //                throw new Exception();
@@ -280,10 +352,10 @@ public class Host {
 
                     switch (function) {
                         case NOTES:
-                            printNotes(filename, timestamp, outputNumber, features, relativePath);
+                            printNotes(filename, timestamp, outputNumber, features, xmlFile);
                             break;
                         case SMOOTHED_PITCH_TRACK:
-                            printSmoothedPitch("smoothed_" + filename, timestamp, outputNumber, features, relativePath);
+                            printSmoothedPitch("smoothed_" + filename, timestamp, outputNumber, features, fileSmoothed);
                             break;
                     }
                 }
@@ -298,10 +370,10 @@ public class Host {
                     (block * blockSize, (int) (rate + 0.5));
             switch (function) {
                 case NOTES:
-                    printNotes(filename, timestamp, outputNumber, features, relativePath);
+                    printNotes(filename, timestamp, outputNumber, features, xmlFile);
                     break;
                 case SMOOTHED_PITCH_TRACK:
-                    printSmoothedPitch("smoothed_" + filename, timestamp, outputNumber, features, relativePath);
+                    printSmoothedPitch("smoothed_" + filename, timestamp, outputNumber, features, fileSmoothed);
                     break;
             }
 
