@@ -11,14 +11,14 @@
 			
 		</div>
 		freq:<input id="edit-y" />
-		</br>
+		</br> 
 		midi value:<input onchange="appyMidiValue()" id="edit-midi-value" />
 		midi begin:<input onchange="applyMidiTime()" id="edit-midi-begin" />
 		midi   end:<input onchange="applyMidiTime()" id="edit-midi-end" />
 		</br>
-		scale:<input onchange="myFunction()" id="chart-every" value="Out of order" />
-		time begin:<input onchange="myFunction()" id="chart-time-begin" value="Out of order"/>
-		time   end: <input onchange="myFunction()" id="chart-time-end" value="Out of order"/> 
+		scale:<input onchange="recalculateDateSet()" id="chart-every" value="Out of order" />
+		time begin:<input onchange="recalculateDateSet()" id="chart-time-begin" value="Out of order"/>
+		time   end: <input onchange="recalculateDateSet()" id="chart-time-end" value="Out of order"/> 
 		<button id="apply-changes" onclick="ds()">Revert last chnge</button>
 		</br>
 		Override midi:<input type="checkbox" id="override-midi">
@@ -28,5 +28,7 @@
 		<button id="apply-changes" onclick="addMidiBefore()">Add Midi Before</button>
 		<button id="apply-changes" onclick="addMidiAfter()">Add Midi After</button>
 		<button id="apply-changes" onclick="splitMidi()">Split Midi</button>
+		<button id="apply-changes" onclick="deleteMidi()">Delete Midi</button>
+		<button id="play-Midi" onclick="playMidi()">Play Midi</button>
 	</body>
 </html>
