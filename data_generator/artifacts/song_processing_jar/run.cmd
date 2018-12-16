@@ -1,1 +1,2 @@
-"C:\Program Files (x86)\Java\jre1.8.0_181\bin\java.exe" -jar song-processing.jar 01.mp3
+"C:\Program Files (x86)\Java\jre1.8.0_181\bin\java.exe" -jar data_generator.jar songs
+PAUSE

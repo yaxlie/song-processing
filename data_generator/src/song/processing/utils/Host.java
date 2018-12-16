@@ -16,6 +16,7 @@ import org.vamp_plugins.Feature;
 import org.vamp_plugins.RealTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import song.processing.Notes;
 import song.processing.common.FunctionsEnum;
 
 import javax.sound.sampled.AudioSystem;
@@ -90,6 +91,10 @@ public class Host {
                     Element midi = document.createElement("midiValue");
                     midi.appendChild(document.createTextNode(String.valueOf(midiValue)));
                     note.appendChild(midi);
+
+                    Element letterNote = document.createElement("letterNote");
+                    letterNote.appendChild(document.createTextNode(Notes.note(midiValue)));
+                    note.appendChild(letterNote);
                 }
 
                 root.appendChild(note);
