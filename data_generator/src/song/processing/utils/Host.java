@@ -58,7 +58,7 @@ public class Host {
 
                 if (f.hasTimestamp) {
                     Element timestamp = document.createElement("timestamp");
-                    timestamp.appendChild(document.createTextNode(String.valueOf(f.timestamp)));
+                    timestamp.appendChild(document.createTextNode(Helper.RealTime2String(f.timestamp, 2)));
                     note.appendChild(timestamp);
                 } else {
                     Element frame = document.createElement("frame");
@@ -67,7 +67,7 @@ public class Host {
                 }
                 if (f.hasDuration) {
                     Element duration = document.createElement("duration");
-                    duration.appendChild(document.createTextNode(String.valueOf(f.duration)));
+                    duration.appendChild(document.createTextNode(Helper.RealTime2String(f.duration, 2)));
                     note.appendChild(duration);
                 }
                 for (float v : f.values) {
