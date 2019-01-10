@@ -223,10 +223,11 @@ function calculateFreqFromMidi(midiValue){
 	return (Math.pow(2, val) * 440);
 }
 
-function appyMidiValue(){
+function appyMidiValue(toneChange=0){
 	if(activePoint){
 		if(activePoint[0] != null){
 			if(midiv.value){
+				midiv.value = +midiv.value + toneChange;
 				var datasetIndex = activePoint[0]._datasetIndex;
 				midiValues[datasetIndex] = parseFloat(midiv.value);
 				var freq = calculateFreqFromMidi(parseFloat(midiv.value));
@@ -237,6 +238,7 @@ function appyMidiValue(){
 		}
 	}
 }
+
 
 function resetActivePoint(){
 	if(activePoint && activePoint[0]){
