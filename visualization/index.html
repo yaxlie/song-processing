@@ -1,15 +1,29 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>World population</title>
+		<title>SoundScribe</title>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css">
 	</head>
 	<body>
+		<div class="header">
+			<h1>SoundScribe</h1>
+		</div>
+
 		<div class="wrapper">
 			<canvas id="myChart" width="1600" height="900"></canvas>
 			
 		</div>
+
+		<div class="mpanel">
+			<input class="button" type="image" src="img/up.png" />
+			<input class="button" type="image" src="img/down.png" />
+			<input class="button" type="image" src="img/stop.png" />
+			<input class="button" type="image" src="img/play.png" />
+			<input class="button" type="image" src="img/left.png" />
+			<input class="button" type="image" src="img/right.png" />
+		</div>
+
 		freq:<input id="edit-y" />
 		</br> 
 		midi value:<input onchange="appyMidiValue()" id="edit-midi-value" />

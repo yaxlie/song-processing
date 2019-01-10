@@ -8,9 +8,34 @@ body {
   margin: 50px auto;
 }
 
+.header {
+  background-color: #392E6C;
+  position:absolute;
+  top:0;
+  width:100%;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.mpanel {
+  background-color: #392E6C;
+  position:absolute;
+  bottom:0;
+  width:100%;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.button {
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
 h1 {
   font-weight: 200;
-  font-size: 3em;
+  font-size: 2em;
+  text-shadow: 2px 2px #ff0000;
+  color: white;
   margin: 0 0 0.1em 0;
 }
 
