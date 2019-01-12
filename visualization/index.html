@@ -9,18 +9,21 @@
 		<div class="header">
 			<h1>SoundScribe</h1>
 		</div>
-
+		
+		
 		<div class="wrapper">
 			<canvas id="myChart" width="1600" height="900"></canvas>
 		</div>
+		<div id="input-plane" style="color:red;">Nie ma pliku z przebiegiem funkcji</div>
+		<div id="input-xml" style="color:red;">Nie ma pliku xml z midi</div>
 
 		<div class="mpanel">
 			<input class="button" type="image" src="img/up.png" onclick="appyMidiValue(1)" />
 			<input class="button" type="image" src="img/down.png" onclick="appyMidiValue(-1)" />
-			<input class="button" type="image" src="img/stop.png" />
-			<input class="button" type="image" src="img/play.png" />
-			<input class="button" type="image" src="img/left.png" />
-			<input class="button" type="image" src="img/right.png" />
+			<input class="button" type="image" src="img/stop.png" onclick="stopMidi()"/>
+			<input class="button" type="image" src="img/play.png"  onclick="playMidi()"/>
+			<input class="button" type="image" src="img/left.png" onClick="goLeft()"/>
+			<input class="button" type="image" src="img/right.png" onClick="goRight()"/>
 		</div>
 
 		freq:<input id="edit-y" />
@@ -38,10 +41,18 @@
 		<script src="script.js"></script>
 		</br>
 		</br>
+		<button id="apply-changes" onclick="nextMidi()">Next Midi</button>
+		<button id="apply-changes" onclick="prevMidi()">Prev Midi</button>
 		<button id="apply-changes" onclick="addMidiBefore()">Add Midi Before</button>
 		<button id="apply-changes" onclick="addMidiAfter()">Add Midi After</button>
 		<button id="apply-changes" onclick="splitMidi()">Split Midi</button>
 		<button id="apply-changes" onclick="deleteMidi()">Delete Midi</button>
 		<button id="play-Midi" onclick="playMidi()">Play Midi</button>
 	</body>
+
+<output id="list"></output>
+
+<script>
+
+</script>
 </html>
