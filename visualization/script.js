@@ -25,6 +25,11 @@ var beginTimeOr = 0;
 var endTimeOr = 0;
 var chartCutConst = 7;
 var time;
+var pause = false;
+var play = false;
+var audioContext = new AudioContext();
+var currentPlayingIdx = -1;
+
 function transformMitiToArray(midi, beginTime,endTime){
 	var output = [];
 	var j = 0;
@@ -216,6 +221,31 @@ function recalculateDateSet(){
     }
 });
 myChart.update();
+updateNotesBar();
+}
+
+function updateNotesBar(){
+	var notesBar = document.getElementById("notes-bar");
+	while (notesBar.firstChild) {
+		notesBar.removeChild(notesBar.firstChild);
+	}
+
+	for(var i=0; i<dataset.length-1; i++){
+		notesBar.innerHTML += '<b style="color:white"> ' + midiValues[i] +' </b>';
+	}
+}
+
+function pointNote(id){
+	console.log(id);
+	var notesBar = document.getElementById("notes-bar");
+	if(id>0){
+		var prevNote = notesBar.childNodes[id-1];
+		prevNote.style["color"] = "white";
+	}
+	var newNote = notesBar.childNodes[id];
+	if(newNote != null){
+		newNote.style["color"] = "red";
+	}
 }
 
 function deleteMidi(datasetIndex){
@@ -377,27 +407,100 @@ ctx.onclick = function(evt){
 			midie.value = "";
 		}
 	}
-	console.log("dupa");
 };
+
+function stopMidi(){
+	pause = false;
+	play = false;
+	var button = document.getElementById("play-button").src = "img/play.png";
+	audioContext.close();
+	var notesBar = document.getElementById("notes-bar");
+	for(var i=0; i<notesBar.childNodes.length; i++){
+		notesBar.childNodes[i].style["color"] = "white";
+	}
+}
 
 function playMidi(){
 
-time = 0;
-var ij = 0;
-	while (ij < dataset.length - 2){
-		time = parseFloat(dataset[ij].data[0].x);
-		var audioContext = new AudioContext();
-		var o = audioContext.createOscillator();
-		o.frequency.setTargetAtTime(dataset[ij].data[1].y, audioContext.currentTime, 0);
-		o.connect(audioContext.destination);
-		o.start(time);
-		//console.log(parseFloat(dataset[ij].data[1].x) - parseFloat(dataset[ij].data[0].x));
-		time = parseFloat(dataset[ij].data[1].x)
-		//console.log(time);
-		o.stop(time);
-		ij++;
+	// Odtwarzanie jest zapauzowane 
+	if(play && pause) {
+	    audioContext.resume().then(function() {
+	    	pause = false;
+	      	//audioChecker(1000);
+	    }); 
+	}
+
+	// Nagranie jest odtwarzane, chcemy dać pauzę
+	else if(play && !pause){
+		pause = true;
+	  	audioContext.suspend().then(function() {
+      		button.src = "img/resume.png";
+    	});
+	}
+
+	// Nagranie jest puste. Zakończyło się, lub nie było jeszcze włączane.
+	else if(!play && !pause)
+	{
+		currentPlayingIdx = 0;
+		pointNote(0);
+		button = document.getElementById("play-button");
+		audioContext = new AudioContext();
+		time = 0;
+		var i = 0;
+		var id = 0;
+		var maxI = dataset.length - 1;
+			while ((i < maxI) && !pause){
+				time = parseFloat(dataset[i].data[0].x);
+				var o = audioContext.createOscillator();
+				o.frequency.setTargetAtTime(dataset[i].data[1].y, audioContext.currentTime, 0);
+				o.connect(audioContext.destination);
+				o.start(time);
+				//console.log(parseFloat(dataset[ij].data[1].x) - parseFloat(dataset[ij].data[0].x));
+				time = parseFloat(dataset[i].data[1].x)
+				//console.log(time);
+				o.stop(time);
+
+				o.onended = function() {
+						id += 1;
+						button.src = button.src.split("/").pop() === "pause.png"? "img/pause2.png" : "img/pause.png";
+						pointNote(id);
+					}
+
+				i++;
+
+				if(i===maxI){
+					o.onended = function() {
+						id += 1;
+						play = false;
+						pause = false;
+						button = document.getElementById("play-button");
+					  	button.src = "img/play.png";
+					  	currentPlayingIdx = -1;
+					  	pointNote(id);
+					}
+				}
+			}
+			play = !play;
+			//audioChecker(1000);
 	}
 }
+
+// function timer(ms) {
+//  return new Promise(res => setTimeout(res, ms));
+// }
+
+// // Głównie do 
+// async function audioChecker (delay) {
+// 	var even=true;
+// 	button = document.getElementById("play-button");
+//   	while (play && !pause) {
+// 	    var icon = even? "img/pause.png" : "img/pause2.png";
+// 		button.src = icon;
+// 		even=!even;
+// 	    await timer(delay);
+//   	}
+// }
+
 
 function goRight(){
 	var newTimeb = chartTimeb.value;

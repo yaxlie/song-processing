@@ -27,6 +27,14 @@ body {
   padding-bottom: 30px;
 }
 
+.notes {
+  padding-bottom: 20px;
+}
+
+b {
+  color: white;
+}
+
 .button {
   margin-right: 10px;
   margin-left: 10px;
