@@ -30,6 +30,7 @@ var pause = false;
 var play = false;
 var audioContext = new AudioContext();
 var currentPlayingIdx = -1;
+var midiData = [];
 
 function transformMitiToArray(midi, beginTime,endTime){
 	var output = [];
@@ -104,13 +105,16 @@ function getDataSet(label, midi){
 	console.log(midi);
 	console.log(label);
 	var data = [];
+	midiData = [];
 	var i = 0;
 	while(i < midi.length){
 		var obj = {data: midi[i], borderColor: "#ac2b2b",fill: false}
 		data.push(obj);
+		midiData.push(obj);
 		i = i + 1;
 	}
 	i = 0;
+	console.log(midiData)
 	while(i < label.length){
 		if(label[i].length > 10){
 			var obj = {data: label[i], radius:0, borderColor: "#3e95cd",fill: false};
@@ -201,6 +205,7 @@ function recalculateDateSet(){
 	midiValues = [];
 	//nie pytać działa...
 	var dataset4 = generateDataSet(midiFile, parseFloat(chartTimeb.value), parseFloat(chartTimee.value), file, takeEveryOr);
+	console.log(dataset4);
 	dataset = dataset4
 	myChart = new Chart(ctx, {
   type: 'scatter',
@@ -451,21 +456,22 @@ function playMidi(){
 	{
 		currentPlayingIdx = 0;
 		pointNote(0);
+		console.log(midiData);
 		button = document.getElementById("play-button");
 		audioContext = new AudioContext();
 		time = 0;
 		var i = 0;
 		var id = 0;
-		var maxI = dataset.length - 1;
+		var maxI = midiData.length - 1;
 			while ((i < maxI) && !pause){
-				if(dataset[i] && dataset[i].data && dataset[i].data[0]){
-					time = parseFloat(dataset[i].data[0].x);
+				if(midiData[i] && midiData[i].data && midiData[i].data[0]){
+					time = parseFloat(midiData[i].data[0].x);
 					var o = audioContext.createOscillator();
-					o.frequency.setTargetAtTime(dataset[i].data[1].y, audioContext.currentTime, 0);
+					o.frequency.setTargetAtTime(midiData[i].data[1].y, audioContext.currentTime, 0);
 					o.connect(audioContext.destination);
 					o.start(time);
 					//console.log(parseFloat(dataset[ij].data[1].x) - parseFloat(dataset[ij].data[0].x));
-					time = parseFloat(dataset[i].data[1].x)
+					time = parseFloat(midiData[i].data[1].x)
 					//console.log(time);
 					o.stop(time);
 
