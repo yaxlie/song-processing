@@ -4,7 +4,7 @@ body {
 }
 
 .wrapper {
-  max-width: 800px;
+  max-width: 80vh;
   margin: 50px auto;
   margin-top: 100px;
 }
@@ -14,21 +14,25 @@ body {
   position:absolute;
   top:0;
   width:100%;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding-top: 2vh;
+  padding-bottom: 2vh;
+}
+
+.footer {
+  position:absolute;
+  bottom:0;
+  width:100%;
 }
 
 .mpanel {
   background-color: #392E6C;
-  position:absolute;
-  bottom:0;
   width:100%;
-  padding-top: 30px;
-  padding-bottom: 30px;
+  padding-top: 3vh;
+  padding-bottom: 3vh;
 }
 
 .notes {
-  padding-bottom: 20px;
+  padding-bottom: 2vh;
 }
 
 b {
@@ -36,8 +40,10 @@ b {
 }
 
 .button {
-  margin-right: 10px;
-  margin-left: 10px;
+  margin-right: 1vh;
+  margin-left: 1vh;
+  height:10vh; 
+  width: :10vh; 
 }
 
 h1 {

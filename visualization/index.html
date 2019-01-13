@@ -16,42 +16,46 @@
 		</div>
 		<div id="input-plane" style="color:red;">Nie ma pliku z przebiegiem funkcji</div>
 		<div id="input-xml" style="color:red;">Nie ma pliku xml z midi</div>
+		<div class="footer">
+			<table align="center">
+			<tbody>
+			<tr>
+			<td>freq:<br><input id="edit-y" /></td>
+			<td>midi value:<br><input onchange="appyMidiValue()" id="edit-midi-value" /></td>
+			<td>midi begin:<br><input onchange="applyMidiTime()" id="edit-midi-begin" /></td>
+			<td>midi   end:<br><input onchange="applyMidiTime()" id="edit-midi-end" /></td>
+			<td>scale:<br><input onchange="recalculateDateSet()" id="chart-every" value="Out of order" /></td>
+			<td>time begin:<br><input onchange="recalculateDateSet()" id="chart-time-begin" value="Out of order"/></td>
+			<td>time   end:<br><input onchange="recalculateDateSet()" id="chart-time-end" value="Out of order"/></td>
+			<td>Override midi:<br><input type="checkbox" id="override-midi"></td>
+			</tr>
+			</tbody>
+			</table>
 
-		<div class="mpanel">
-			<div id="notes-bar" class="notes"></div>
+			<button id="apply-changes" onclick="ds()">Revert last chnge</button>
+			<script src="script.js"></script>
+			<button id="apply-changes" onclick="nextMidi()">Next Midi</button>
+			<button id="apply-changes" onclick="prevMidi()">Prev Midi</button>
+			<button id="apply-changes" onclick="addMidiBefore()">Add Midi Before</button>
+			<button id="apply-changes" onclick="addMidiAfter()">Add Midi After</button>
+			<button id="apply-changes" onclick="splitMidi()">Split Midi</button>
+			<button id="apply-changes" onclick="deleteMidi()">Delete Midi</button>
+			<button id="play-Midi" onclick="playMidi()">Play Midi</button>
+			<button id="save-btton" onclick="saveChanges()">Save Midi</button>
 
-			<br>
-			<input class="button" type="image" src="img/up.png" onclick="appyMidiValue(1)" />
-			<input class="button" type="image" src="img/down.png" onclick="appyMidiValue(-1)" />
-			<input class="button" type="image" src="img/stop.png" onclick="stopMidi()"/>
-			<input id="play-button" class="button" type="image" src="img/play.png"  onclick="playMidi()"/>
-			<input class="button" type="image" src="img/left.png" onClick="goLeft()"/>
-			<input class="button" type="image" src="img/right.png" onClick="goRight()"/>
+			<div class="mpanel">
+				<div id="notes-bar" class="notes"></div>
+
+				<br>
+				<input class="button" type="image" src="img/up.png" onclick="appyMidiValue(1)" />
+				<input class="button" type="image" src="img/down.png" onclick="appyMidiValue(-1)" />
+				<input class="button" type="image" src="img/stop.png" onclick="stopMidi()"/>
+				<input id="play-button" class="button" type="image" src="img/play.png"  onclick="playMidi()"/>
+				<input class="button" type="image" src="img/left.png" onClick="goLeft()"/>
+				<input class="button" type="image" src="img/right.png" onClick="goRight()"/>
+			</div>
 		</div>
 
-		freq:<input id="edit-y" />
-		</br> 
-		midi value:<input onchange="appyMidiValue()" id="edit-midi-value" />
-		midi begin:<input onchange="applyMidiTime()" id="edit-midi-begin" />
-		midi   end:<input onchange="applyMidiTime()" id="edit-midi-end" />
-		</br>
-		scale:<input onchange="recalculateDateSet()" id="chart-every" value="Out of order" />
-		time begin:<input onchange="recalculateDateSet()" id="chart-time-begin" value="Out of order"/>
-		time   end: <input onchange="recalculateDateSet()" id="chart-time-end" value="Out of order"/> 
-		<button id="apply-changes" onclick="ds()">Revert last chnge</button>
-		</br>
-		Override midi:<input type="checkbox" id="override-midi">
-		<script src="script.js"></script>
-		</br>
-		</br>
-		<button id="apply-changes" onclick="nextMidi()">Next Midi</button>
-		<button id="apply-changes" onclick="prevMidi()">Prev Midi</button>
-		<button id="apply-changes" onclick="addMidiBefore()">Add Midi Before</button>
-		<button id="apply-changes" onclick="addMidiAfter()">Add Midi After</button>
-		<button id="apply-changes" onclick="splitMidi()">Split Midi</button>
-		<button id="apply-changes" onclick="deleteMidi()">Delete Midi</button>
-		<button id="play-Midi" onclick="playMidi()">Play Midi</button>
-		<button id="save-btton" onclick="saveChanges()">Save Midi</button>
 	</body>
 
 <output id="list"></output>
