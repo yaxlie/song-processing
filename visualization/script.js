@@ -1,5 +1,5 @@
 
-
+var rootElement = "BLE";
 var file = "";
 
 
@@ -33,22 +33,23 @@ var currentPlayingIdx = -1;
 function transformMitiToArray(midi, beginTime,endTime){
 	var output = [];
 	var j = 0;
-	while(midiFile.getElementsByTagName("BLE")[0].children[j] != null){
-		this.midiValues.push(midi.getElementsByTagName("BLE")[0].children[j].children[3].textContent);
+	while(midiFile.getElementsByTagName(rootElement)[0].children[j] != null){
+		
 		output[j] = [];
 		var obj = {
-			y: calculateFreqFromMidi(midi.getElementsByTagName("BLE")[0].children[j].children[3].textContent)
-		  , x: midi.getElementsByTagName("BLE")[0].children[j].children[0].textContent
+			y: calculateFreqFromMidi(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent)
+		  , x: midi.getElementsByTagName(rootElement)[0].children[j].children[0].textContent
 			};
 		if(obj.x > endTime){
 			break;
 		}
 		if(obj.x > beginTime){	
+		this.midiValues.push(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent);
 			output[j].push(obj);
 		
 			obj = {
-				y: calculateFreqFromMidi(midi.getElementsByTagName("BLE")[0].children[j].children[3].textContent)
-			  , x: parseFloat(midi.getElementsByTagName("BLE")[0].children[j].children[0].textContent) + parseFloat(midi.getElementsByTagName("BLE")[0].children[j].children[1].textContent)
+				y: calculateFreqFromMidi(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent)
+			  , x: parseFloat(midi.getElementsByTagName(rootElement)[0].children[j].children[0].textContent) + parseFloat(midi.getElementsByTagName("BLE")[0].children[j].children[1].textContent)
 				};
 			output[j].push(obj);
 		}
@@ -231,7 +232,9 @@ function updateNotesBar(){
 	}
 
 	for(var i=0; i<dataset.length-1; i++){
-		notesBar.innerHTML += '<b style="color:white"> ' + midiValues[i] +' </b>';
+		if(midiValues[i] != null){
+			notesBar.innerHTML += '<b style="color:white"> ' + midiValues[i] +' </b>';
+		}
 	}
 }
 
@@ -450,22 +453,23 @@ function playMidi(){
 		var id = 0;
 		var maxI = dataset.length - 1;
 			while ((i < maxI) && !pause){
-				time = parseFloat(dataset[i].data[0].x);
-				var o = audioContext.createOscillator();
-				o.frequency.setTargetAtTime(dataset[i].data[1].y, audioContext.currentTime, 0);
-				o.connect(audioContext.destination);
-				o.start(time);
-				//console.log(parseFloat(dataset[ij].data[1].x) - parseFloat(dataset[ij].data[0].x));
-				time = parseFloat(dataset[i].data[1].x)
-				//console.log(time);
-				o.stop(time);
+				if(dataset[i] && dataset[i].data && dataset[i].data[0]){
+					time = parseFloat(dataset[i].data[0].x);
+					var o = audioContext.createOscillator();
+					o.frequency.setTargetAtTime(dataset[i].data[1].y, audioContext.currentTime, 0);
+					o.connect(audioContext.destination);
+					o.start(time);
+					//console.log(parseFloat(dataset[ij].data[1].x) - parseFloat(dataset[ij].data[0].x));
+					time = parseFloat(dataset[i].data[1].x)
+					//console.log(time);
+					o.stop(time);
 
-				o.onended = function() {
-						id += 1;
-						button.src = button.src.split("/").pop() === "pause.png"? "img/pause2.png" : "img/pause.png";
-						pointNote(id);
-					}
-
+					o.onended = function() {
+							id += 1;
+							button.src = button.src.split("/").pop() === "pause.png"? "img/pause2.png" : "img/pause.png";
+							pointNote(id);
+						}
+				}
 				i++;
 
 				if(i===maxI){
@@ -474,11 +478,12 @@ function playMidi(){
 						play = false;
 						pause = false;
 						button = document.getElementById("play-button");
-					  	button.src = "img/play.png";
-					  	currentPlayingIdx = -1;
-					  	pointNote(id);
+						button.src = "img/play.png";
+						currentPlayingIdx = -1;
+						pointNote(id);
 					}
 				}
+				
 			}
 			play = !play;
 			//audioChecker(1000);
@@ -498,9 +503,23 @@ function playMidi(){
 // 		button.src = icon;
 // 		even=!even;
 // 	    await timer(delay);
-//   	}
 // }
 
+function saveChanges(){
+	var j = 0;
+		console.log(midiFile.getElementsByTagName(rootElement)[0].children[j].children[0].textContent);
+		console.log(chartTimeb.value);
+		console.log(chartTimee.value);
+	while(midiFile.getElementsByTagName(rootElement)[0].children[j] != null){
+		
+		if(parseFloat(midiFile.getElementsByTagName(rootElement)[0].children[j].children[0].textContent) > parseFloat(chartTimeb.value) && parseFloat(midiFile.getElementsByTagName(rootElement)[0].children[j].children[0].textContent) < parseFloat(chartTimee.value)){
+			console.log(midiValues[j]);
+			midiFile.getElementsByTagName(rootElement)[0].children[j].children[3].textContent =  midiValues[j];
+		}
+		j = j + 1;
+	}
+	console.log(midiFile);
+}
 
 function goRight(){
 	var newTimeb = chartTimeb.value;
@@ -508,8 +527,8 @@ function goRight(){
 	chartTimeb.value = newTimee;
 	chartTimee.value = parseFloat(newTimee) + (parseFloat(newTimee) - parseFloat(newTimeb));
 	recalculateDateSet()
-	
 }
+
 function goLeft(){
 	console.log(myChart.data);
 	var newTimeb = chartTimeb.value;
