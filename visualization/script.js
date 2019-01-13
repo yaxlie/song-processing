@@ -18,7 +18,8 @@ var midiFile = "";
   .then(t => midiFile = parser.parseFromString(midiFile,"text/xml"));
 */  
 
-var midiValues =[];
+var midiValues = [];
+var midiValuesNotes = []
 var fileIterator = -1;
 var takeEveryOr = 10; 
 var beginTimeOr = 0;
@@ -33,8 +34,9 @@ var currentPlayingIdx = -1;
 function transformMitiToArray(midi, beginTime,endTime){
 	var output = [];
 	var j = 0;
+	midiValuesNotes = [];
 	while(midiFile.getElementsByTagName(rootElement)[0].children[j] != null){
-		
+		this.midiValues.push(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent);
 		output[j] = [];
 		var obj = {
 			y: calculateFreqFromMidi(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent)
@@ -44,7 +46,7 @@ function transformMitiToArray(midi, beginTime,endTime){
 			break;
 		}
 		if(obj.x > beginTime){	
-		this.midiValues.push(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent);
+			midiValuesNotes.push(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent);
 			output[j].push(obj);
 		
 			obj = {
@@ -55,6 +57,8 @@ function transformMitiToArray(midi, beginTime,endTime){
 		}
 		j = j + 1;
 	}	
+	console.log(midiValues);
+	console.log(midiValuesNotes);
 	return output;
 }
 
@@ -232,8 +236,8 @@ function updateNotesBar(){
 	}
 
 	for(var i=0; i<dataset.length-1; i++){
-		if(midiValues[i] != null){
-			notesBar.innerHTML += '<b style="color:white"> ' + midiValues[i] +' </b>';
+		if(midiValuesNotes[i] != null){
+			notesBar.innerHTML += '<b style="color:white"> ' + midiValuesNotes[i] +' </b>';
 		}
 	}
 }
@@ -398,6 +402,7 @@ ctx.onclick = function(evt){
 	activePoint = myChart.getElementAtEvent(evt);
 	var activePoints = myChart.getElementsAtEvent(evt);
 	if(activePoint[0] != null){
+		console.log(activePoint[0]._datasetIndex);
 		var datasetIndex = activePoint[0]._datasetIndex;
 		var index = activePoint[0]._index;
 		yInput.value = dataset[datasetIndex].data[index].y;
@@ -507,18 +512,17 @@ function playMidi(){
 
 function saveChanges(){
 	var j = 0;
-		console.log(midiFile.getElementsByTagName(rootElement)[0].children[j].children[0].textContent);
-		console.log(chartTimeb.value);
-		console.log(chartTimee.value);
 	while(midiFile.getElementsByTagName(rootElement)[0].children[j] != null){
 		
 		if(parseFloat(midiFile.getElementsByTagName(rootElement)[0].children[j].children[0].textContent) > parseFloat(chartTimeb.value) && parseFloat(midiFile.getElementsByTagName(rootElement)[0].children[j].children[0].textContent) < parseFloat(chartTimee.value)){
-			console.log(midiValues[j]);
+			midiFile.getElementsByTagName(rootElement)[0].children[j].children[0].textContent = parseFloat(dataset[j].data[0].x);
+			midiFile.getElementsByTagName(rootElement)[0].children[j].children[1].textContent =  parseFloat(dataset[j].data[1].x) - parseFloat(dataset[j].data[0].x);
 			midiFile.getElementsByTagName(rootElement)[0].children[j].children[3].textContent =  midiValues[j];
 		}
 		j = j + 1;
 	}
-	console.log(midiFile);
+	myChart.update();
+	
 }
 
 function goRight(){
@@ -530,7 +534,6 @@ function goRight(){
 }
 
 function goLeft(){
-	console.log(myChart.data);
 	var newTimeb = chartTimeb.value;
 	var newTimee = chartTimee.value;
 	if((parseFloat(newTimeb) + parseFloat(newTimeb - newTimee)) > 0){
