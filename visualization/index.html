@@ -63,6 +63,9 @@
 					<button onclick="prevMidi()"><span class="glyphicon glyphicon-triangle-left"></span></button>
 					<button onclick="appyMidiValue(-1)" ><span class="glyphicon glyphicon-triangle-bottom"></span></button>
 					<button onclick="appyMidiValue(1)"><span class="glyphicon glyphicon-triangle-top"></span></button>
+					</br>
+					<button onclick="addMidiBefore()"><span class="glyphicon glyphicon-step-backward"></span></button>
+					<button onclick="addMidiAfter()"><span class="glyphicon glyphicon-step-forward"></span></button>
 				</div>
 				<div style="width: 33%; float:left;" class="mpanel">
 					<p style="color:white">Music</p>
@@ -71,11 +74,11 @@
 				</div>
 				<div style="width: 34%; float:left;" class="mpanel">
 					<p style="color:white">Chart/File</p>
-					<button><span class="glyphicon glyphicon-floppy-save"></span></button>
+					<button onclick="saveToFile()"><span class="glyphicon glyphicon-floppy-save"></span></button>
 					<button><span class="glyphicon glyphicon-zoom-in"></span></button>
 					<button><span class="glyphicon glyphicon-zoom-out"></span></button>
-					<button><span class="glyphicon glyphicon-arrow-left"></span></button>
-					<button><span class="glyphicon glyphicon-arrow-right"></span></button>
+					<button onClick="goLeft()"><span class="glyphicon glyphicon-arrow-left"></span></button>
+					<button onClick="goRight()"><span class="glyphicon glyphicon-arrow-right"></span></button>
 				</div>
 				
 			</div>
