@@ -549,6 +549,23 @@ function saveToFile(){
 	saveAs(file,"test.xml");
 }
 
+function scalePlus(){
+	if (parseFloat(chartTimeb.value) > 0.5){
+		chartTimeb.value = parseFloat(chartTimeb.value) - 0.5;
+		chartTimee.value = parseFloat(chartTimee.value) + 0.5;
+	}else{
+		chartTimeb.value = 0;
+		chartTimee.value = parseFloat(chartTimee.value) + 1;
+	}
+	recalculateDateSet()
+}
+
+function scaleMinus(){
+	chartTimeb.value = parseFloat(chartTimeb.value) + 0.5;
+	chartTimee.value = parseFloat(chartTimee.value) - 0.5;
+	recalculateDateSet()
+}
+
 function goRight(){
 	var newTimeb = chartTimeb.value;
 	var newTimee = chartTimee.value;
