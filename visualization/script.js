@@ -544,8 +544,8 @@ function saveChanges(){
 }
 
 function saveToFile(){
-	console.log(midiFile);
-	var file = new Blob([midiFile.documentElement], {type: "text/xml"});
+	console.log(new XMLSerializer().serializeToString(midiFile));(new XMLSerializer()).serializeToString(midiFile);
+	var file = new Blob([new XMLSerializer().serializeToString(midiFile)], {type: "text/xml"});
 	saveAs(file,"test.xml");
 }
 

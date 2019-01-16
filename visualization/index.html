@@ -2,9 +2,13 @@
 <html>
 	<head>
 		<title>SoundScribe</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 		<script src="FileSaver.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css">
+		
 	</head>
 	<body>
 		<div class="header">
@@ -45,16 +49,35 @@
 			<button id="save-btton" onclick="saveChanges()">Save Midi</button>
 			<button id="save-btton" onclick="saveToFile()">Save To File</button>
 			
-			<div class="mpanel">
-				<div id="notes-bar" class="notes"></div>
-
-				<br>
-				<input class="button" type="image" src="img/up.png" onclick="appyMidiValue(1)" />
-				<input class="button" type="image" src="img/down.png" onclick="appyMidiValue(-1)" />
-				<input class="button" type="image" src="img/stop.png" onclick="stopMidi()"/>
-				<input id="play-button" class="button" type="image" src="img/play.png"  onclick="playMidi()"/>
-				<input class="button" type="image" src="img/left.png" onClick="goLeft()"/>
-				<input class="button" type="image" src="img/right.png" onClick="goRight()"/>
+			<div class="mpanel" style="height:15%; min-height:300px" >
+				<div id="notes-bar" ></div>
+				<div style="width: 33%; float:left;" class="mpanel">
+					<p style="color:white">Midi</p>
+					<!--<input class="button" type="image" src="img/up.png" onclick="appyMidiValue(1)" />
+					<input class="button" type="image" src="img/down.png" onclick="appyMidiValue(-1)" />
+					<input class="button" type="image" src="img/stop.png" onclick="stopMidi()"/>
+					<input id="play-button" class="button" type="image" src="img/play.png"  onclick="playMidi()"/>
+					<input class="button" type="image" src="img/left.png" onClick="goLeft()"/>
+					<input class="button" type="image" src="img/right.png" onClick="goRight()"/> -->
+					<button onclick="nextMidi()"><span class="glyphicon glyphicon-triangle-right"></span></button>
+					<button onclick="prevMidi()"><span class="glyphicon glyphicon-triangle-left"></span></button>
+					<button onclick="appyMidiValue(-1)" ><span class="glyphicon glyphicon-triangle-bottom"></span></button>
+					<button onclick="appyMidiValue(1)"><span class="glyphicon glyphicon-triangle-top"></span></button>
+				</div>
+				<div style="width: 33%; float:left;" class="mpanel">
+					<p style="color:white">Music</p>
+					<button><span class="glyphicon glyphicon-stop"></span></button>
+					<button onclick="playMidi()"><span class="glyphicon glyphicon-play"></span></button>
+				</div>
+				<div style="width: 34%; float:left;" class="mpanel">
+					<p style="color:white">Chart/File</p>
+					<button><span class="glyphicon glyphicon-floppy-save"></span></button>
+					<button><span class="glyphicon glyphicon-zoom-in"></span></button>
+					<button><span class="glyphicon glyphicon-zoom-out"></span></button>
+					<button><span class="glyphicon glyphicon-arrow-left"></span></button>
+					<button><span class="glyphicon glyphicon-arrow-right"></span></button>
+				</div>
+				
 			</div>
 		</div>
 
