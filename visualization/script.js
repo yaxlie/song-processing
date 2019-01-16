@@ -263,6 +263,8 @@ function pointNote(id){
 function deleteMidi(datasetIndex){
 	dataset.splice(datasetIndex, 1);
 	midiValues.splice(datasetIndex , 1);
+	updateNotesBar()
+	
 
 }
 
@@ -274,6 +276,7 @@ function deleteMidi(){
 			midiValues.splice(datasetIndex, 1);
 			myChart.update();
 			resetActivePoint();
+			updateNotesBar()
 		}
 	}
 }
@@ -296,6 +299,7 @@ function appyMidiValue(toneChange=0){
 				dataset[datasetIndex].data[0].y = freq;
 				dataset[datasetIndex].data[1].y = freq;
 				myChart.update();
+				updateNotesBar()
 			}
 		}
 	}
@@ -324,6 +328,7 @@ function splitMidi(){
 		midiValues.splice( (datasetIndex +1), 0, midiValues[datasetIndex]);
 		myChart.update();
 		resetActivePoint();
+		updateNotesBar()
 		
 	}
 }
@@ -338,6 +343,7 @@ function addMidiBefore(){
 		dataset.splice( (datasetIndex ), 0, obj);
 		midiValues.splice( (datasetIndex ), 0, midiValues[datasetIndex]);
 		myChart.update();
+		updateNotesBar()
 	}
 }
 
@@ -352,6 +358,7 @@ function addMidiAfter(){
 		dataset.splice( (datasetIndex + 1), 0, obj);
 		midiValues.splice( (datasetIndex + 1), 0, midiValues[datasetIndex]);
 		myChart.update();
+		updateNotesBar()
 	}
 }
 
@@ -366,6 +373,7 @@ function midiTimeValueChanger(datasetIndex){
 			break;
 		}
 		i = i + 1;
+		
 	}
 	console.log(datasetIndex);
 	while((datasetIndex + 1) < parseInt(dataset.length)){
@@ -517,18 +525,28 @@ function playMidi(){
 // }
 
 function saveChanges(){
+	console.log(midiFile);
 	var j = 0;
 	while(midiFile.getElementsByTagName(rootElement)[0].children[j] != null){
 		
 		if(parseFloat(midiFile.getElementsByTagName(rootElement)[0].children[j].children[0].textContent) > parseFloat(chartTimeb.value) && parseFloat(midiFile.getElementsByTagName(rootElement)[0].children[j].children[0].textContent) < parseFloat(chartTimee.value)){
-			midiFile.getElementsByTagName(rootElement)[0].children[j].children[0].textContent = parseFloat(dataset[j].data[0].x);
-			midiFile.getElementsByTagName(rootElement)[0].children[j].children[1].textContent =  parseFloat(dataset[j].data[1].x) - parseFloat(dataset[j].data[0].x);
-			midiFile.getElementsByTagName(rootElement)[0].children[j].children[3].textContent =  midiValues[j];
+			if(dataset && dataset[j] && dataset[j].data && dataset[j].data[0] && dataset[j].data[0].x){
+				midiFile.getElementsByTagName(rootElement)[0].children[j].children[0].textContent = parseFloat(dataset[j].data[0].x);
+				midiFile.getElementsByTagName(rootElement)[0].children[j].children[1].textContent =  parseFloat(dataset[j].data[1].x) - parseFloat(dataset[j].data[0].x);
+				midiFile.getElementsByTagName(rootElement)[0].children[j].children[3].textContent =  midiValues[j];
+			}
 		}
 		j = j + 1;
 	}
 	myChart.update();
+	updateNotesBar()
 	
+}
+
+function saveToFile(){
+	console.log(midiFile);
+	var file = new Blob([midiFile.documentElement], {type: "text/xml"});
+	saveAs(file,"test.xml");
 }
 
 function goRight(){

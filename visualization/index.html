@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<title>SoundScribe</title>
+		<script src="FileSaver.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css">
 	</head>
@@ -42,7 +43,8 @@
 			<button id="apply-changes" onclick="deleteMidi()">Delete Midi</button>
 			<button id="play-Midi" onclick="playMidi()">Play Midi</button>
 			<button id="save-btton" onclick="saveChanges()">Save Midi</button>
-
+			<button id="save-btton" onclick="saveToFile()">Save To File</button>
+			
 			<div class="mpanel">
 				<div id="notes-bar" class="notes"></div>
 
