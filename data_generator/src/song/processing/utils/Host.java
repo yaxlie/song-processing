@@ -162,7 +162,7 @@ public class Host {
     }
 
 
-    private static void createPropertiesAndRdf(String filename,Path relativePathString) throws IOException, ParserConfigurationException, TransformerException {
+    private static void createPropertiesAndRdf(String filename,Path relativePathString,File file) throws Exception {
 
         Properties props = new Properties();
         OutputStream output = null;
@@ -170,6 +170,7 @@ public class Host {
         String[] relativePathSplitted = relativePathString.toString().split("\\\\");
         String tempPath="";
         boolean publicationRoot = true;
+        boolean groupPub=true;
 
         for (String s : relativePathSplitted) {
             tempPath = tempPath + s + "\\";
@@ -187,6 +188,7 @@ public class Host {
             System.out.println(tempPath);
             System.out.println(relativePathString);
             if (tempPath.equals(relativePathString.toString() + "\\")) {
+                groupPub=false;
                 props.setProperty("publication.mainFile", filename + ".mp3");
             }
 
@@ -209,7 +211,20 @@ public class Host {
             title.appendChild(document.createTextNode(s));
 
             description.appendChild(title);
+            if(groupPub) {
+                String[] data = Helper.getDurationAndName(file);
+                String dataString = "";
 
+                if (data[0] != null) {
+                    dataString += data[0] + "\n";
+                }
+                dataString += data[1];
+
+                Element descriptionDuration = document.createElement("Description");
+                descriptionDuration.appendChild(document.createTextNode(dataString));
+                description.appendChild(descriptionDuration);
+
+            }
             File rdfFile = new File(tempPath + "\\" + "metadata.rdf");
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -225,7 +240,7 @@ public class Host {
     }
 
 
-    public static void start(FunctionsEnum function, File f, Path relativePath, File fileMp3) throws IOException, ParserConfigurationException, TransformerException {
+    public static void start(FunctionsEnum function, File f, Path relativePath, File fileMp3) throws Exception {
         String key = null;
         System.out.println("[pYIN] Start processing " + f.getName());
         PluginLoader loader = PluginLoader.getInstance();
@@ -246,7 +261,7 @@ public class Host {
         if (!newmp3.exists()) {
             Files.copy(fileMp3.toPath(),newmp3.toPath());
         }
-        createPropertiesAndRdf(filename, Paths.get(relativePathString));
+        createPropertiesAndRdf(filename, Paths.get(relativePathString),fileMp3);
 
 
         switch (function) {

@@ -55,7 +55,7 @@ public class Main {
         }
     }
 
-    public static File convertMP3toWAV(File fileMp3) {
+    private static File convertMP3toWAV(File fileMp3) {
         File temp = null;
         try {
             temp = File.createTempFile("temp_" + fileMp3.getName().split("\\.")[0], ".wav");
