@@ -59,26 +59,26 @@
 					<input id="play-button" class="button" type="image" src="img/play.png"  onclick="playMidi()"/>
 					<input class="button" type="image" src="img/left.png" onClick="goLeft()"/>
 					<input class="button" type="image" src="img/right.png" onClick="goRight()"/> -->
-					<button onclick="nextMidi()"><span class="glyphicon glyphicon-triangle-right"></span></button>
-					<button onclick="prevMidi()"><span class="glyphicon glyphicon-triangle-left"></span></button>
-					<button onclick="appyMidiValue(-1)" ><span class="glyphicon glyphicon-triangle-bottom"></span></button>
-					<button onclick="appyMidiValue(1)"><span class="glyphicon glyphicon-triangle-top"></span></button>
+					<input class="button" type="image" src="img/midi_right.png" onClick="nextMidi()"/>
+					<input class="button" type="image" src="img/midi_left.png" onClick="prevMidi()"/>
+					<input class="button" type="image" src="img/down.png" onclick="appyMidiValue(-1)" />
+					<input class="button" type="image" src="img/up.png" onclick="appyMidiValue(1)" />
 					</br>
-					<button onclick="addMidiBefore()"><span class="glyphicon glyphicon-step-backward"></span></button>
-					<button onclick="addMidiAfter()"><span class="glyphicon glyphicon-step-forward"></span></button>
+					<input class="button" type="image" src="img/add_before.png" onclick="addMidiBefore()" />
+					<input class="button" type="image" src="img/add_after.png" onclick="addMidiAfter()" />
 				</div>
 				<div style="width: 33%; float:left;" class="mpanel">
 					<p style="color:white">Music</p>
-					<button><span class="glyphicon glyphicon-stop"></span></button>
-					<button onclick="playMidi()"><span class="glyphicon glyphicon-play"></span></button>
+					<input class="button" type="image" src="img/stop.png" onclick="stopMidi()"/>
+					<input id="play-button" class="button" type="image" src="img/play.png"  onclick="playMidi()"/>
 				</div>
 				<div style="width: 34%; float:left;" class="mpanel">
 					<p style="color:white">Chart/File</p>
-					<button onclick="saveToFile()"><span class="glyphicon glyphicon-floppy-save"></span></button>
-					<button onClick="scalePlus()"><span class="glyphicon glyphicon-zoom-in"></span></button>
-					<button onClick="scaleMinus()"><span class="glyphicon glyphicon-zoom-out"></span></button>
-					<button onClick="goLeft()"><span class="glyphicon glyphicon-arrow-left"></span></button>
-					<button onClick="goRight()"><span class="glyphicon glyphicon-arrow-right"></span></button>
+					<input class="button" type="image" src="img/save.png" onclick="saveToFile()" />
+					<input class="button" type="image" src="img/zoom_in.png" onclick="scalePlus()" />
+					<input class="button" type="image" src="img/zoom_out.png" onclick="scaleMinus()" />
+					<input class="button" type="image" src="img/left.png" onclick="goLeft()" />
+					<input class="button" type="image" src="img/right.png" onclick="goRight()" />
 				</div>
 				
 			</div>
