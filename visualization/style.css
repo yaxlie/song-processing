@@ -2,15 +2,57 @@ body {
   font-family: Helvetica Neue, Arial, sans-serif;
   text-align: center;
 }
-
+.glyphicon {
+    font-size: 50px;
+}
 .wrapper {
-  max-width: 800px;
+  max-width: 80vh;
   margin: 50px auto;
+  margin-top: 100px;
+}
+
+.header {
+  background-color: #392E6C;
+  position:absolute;
+  top:0;
+  width:100%;
+  padding-top: 2vh;
+  padding-bottom: 2vh;
+}
+
+.footer {
+  position:absolute;
+  bottom:0;
+  width:100%;
+}
+
+.mpanel {
+  background-color: #392E6C;
+  width:100%;
+  padding-top: 3vh;
+  padding-bottom: 3vh;
+}
+
+.notes {
+  padding-bottom: 2vh;
+}
+
+b {
+  color: white;
+}
+
+.button {
+  margin-right: 0.1vh;
+  margin-left: 0.1vh;
+  height:8vh; 
+  width: :8vh; 
 }
 
 h1 {
   font-weight: 200;
-  font-size: 3em;
+  font-size: 2em;
+  text-shadow: 2px 2px #ff0000;
+  color: white;
   margin: 0 0 0.1em 0;
 }
 
