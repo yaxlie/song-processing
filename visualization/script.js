@@ -257,7 +257,7 @@ function updateNotesBar(){
 
 	for(var i=0; i<dataset.length-1; i++){
 		if(midiValuesNotes[i] != null){
-			notesBar.innerHTML += '<b style="color:white"> ' + midiValuesNotes[i] +' </b>';
+			notesBar.innerHTML += '<b style="color:white"> ' + note(midiValuesNotes[i]) +' </b>';
 		}
 	}
 }
@@ -278,7 +278,7 @@ function pointNote(id){
 function deleteMidi(selectedValue){
 	dataset.splice(selectedValue, 1);
 	midiValues.splice(selectedValue , 1);
-	updateNotesBar()
+	updateNotesBar();
 	
 
 }
@@ -295,6 +295,15 @@ function deleteMidi(){
 		myChart.update();
 		//resetActivePoint();
 		updateNotesBar()
+	if(activePoint){
+		if(activePoint[0] != null){
+			var datasetIndex = activePoint[0]._datasetIndex;
+			dataset.splice(datasetIndex, 1);
+			midiValues.splice(datasetIndex, 1);
+			myChart.update();
+			resetActivePoint();
+			updateNotesBar();
+		}
 	}
 }
 
@@ -311,11 +320,12 @@ function appyMidiValue(toneChange=0){
 			if(midiv.value){
 				midiv.value = +midiv.value + toneChange;
 				midiValues[selectedValue] = parseFloat(midiv.value);
+				midiValuesNotes[datasetIndex] = parseFloat(midiv.value);
 				var freq = calculateFreqFromMidi(parseFloat(midiv.value));
 				dataset[selectedValue].data[0].y = freq;
 				dataset[selectedValue].data[1].y = freq;
 				myChart.update();
-				updateNotesBar()
+				updateNotesBar();
 			}
 		}
 	}
@@ -340,7 +350,7 @@ function splitMidi(){
 		midiValues.splice( (selectedValue +1), 0, midiValues[selectedValue]);
 		myChart.update();
 		//resetActivePoint();
-		updateNotesBar()
+		updateNotesBar();
 		
 	}
 }
@@ -354,7 +364,7 @@ function addMidiBefore(){
 		dataset.splice( (selectedValue ), 0, obj);
 		midiValues.splice( (selectedValue ), 0, midiValues[selectedValue]);
 		myChart.update();
-		updateNotesBar()
+		updateNotesBar();
 	}
 }
 
@@ -368,7 +378,7 @@ function addMidiAfter(){
 		dataset.splice( (selectedValue + 1), 0, obj);
 		midiValues.splice( (selectedValue + 1), 0, midiValues[selectedValue]);
 		myChart.update();
-		updateNotesBar()
+		updateNotesBar();
 	}
 }
 
@@ -550,7 +560,7 @@ function saveChanges(){
 		j = j + 1;
 	}
 	myChart.update();
-	updateNotesBar()
+	updateNotesBar();
 	
 }
 
@@ -613,6 +623,7 @@ function nextMidi(){
 		dataset[selectedValue].borderColor = orangeColor;
 		myChart.update();
 	}
+	updateNotesBar();
 }
 function prevMidi(){ // TODO
 	if(selectedValue > 0){
@@ -626,6 +637,7 @@ function prevMidi(){ // TODO
 		dataset[selectedValue].borderColor = orangeColor;
 		myChart.update();
 	}
+	updateNotesBar();
 }
 
 
@@ -668,6 +680,35 @@ function handleDragOver(evt) {
 	evt.stopPropagation();
 	evt.preventDefault();
 	evt.dataTransfer.dropEffect = 'copy';
+}
+
+function note(value){
+	var notes = {};
+	notes[12] = "C";
+	notes[13] = "C#";
+	notes[14] = "D";
+	notes[15] = "D#";
+	notes[16] = "E";
+	notes[17] = "F";
+	notes[18] = "F#";
+	notes[19] = "G";
+	notes[20] = "G#";
+	notes[21] = "A";
+	notes[22] = "A#";
+	notes[23] = "H";
+
+    var octave = 0;
+    // klawiatura fortepianu ma zakres <21;108> w midi. Zaczynam od 12 dla ułatwienia.
+    if (value >= 12 && value < 109)
+    {
+        while (notes[value] == undefined){
+            octave++;
+            value -= 12; // Oktawa ma 12 półtonów
+        }
+        return notes[value] + octave.toString();;
+    }
+
+    return "¯\\_(ツ)_/¯";
 }
 
 // Setup the dnd listeners.
