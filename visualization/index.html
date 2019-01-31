@@ -13,6 +13,7 @@
 	<body>
 		<div class="header">
 			<h1>SoundScribe</h1>
+			<div id="notes-bar"></div>
 		</div>
 		
 		
@@ -21,36 +22,28 @@
 		</div>
 		<div id="input-plane" style="color:red;">Nie ma pliku z przebiegiem funkcji</div>
 		<div id="input-xml" style="color:red;">Nie ma pliku xml z midi</div>
-		<div class="footer">
-			<table align="center">
+		<table align="center">
 			<tbody>
 			<tr>
-			<td>freq:<br><input id="edit-y" /></td>
-			<td>midi value:<br><input onchange="appyMidiValue()" id="edit-midi-value" /></td>
-			<td>midi begin:<br><input onchange="applyMidiTime()" id="edit-midi-begin" /></td>
-			<td>midi   end:<br><input onchange="applyMidiTime()" id="edit-midi-end" /></td>
-			<td>scale:<br><input onchange="recalculateDateSet()" id="chart-every" value="Out of order" /></td>
+			<input id="edit-y" type="hidden" />
+			<input onchange="appyMidiValue()" type="hidden" step="1" id="edit-midi-value" /></td>
+			<td>midi begin:<br><input onchange="applyMidiTime()" type="number" step="0.01" id="edit-midi-begin" /></td>
+			<td>midi   end:<br><input onchange="applyMidiTime()"  type="number" step="0.01" id="edit-midi-end" /></td>
+			<!--<td>scale:<br><input onchange="recalculateDateSet()" type="number" step="0.01" id="chart-every" value="Out of order" /></td>-->
 			<td>time begin:<br><input onchange="recalculateDateSet()" id="chart-time-begin" value="Out of order"/></td>
 			<td>time   end:<br><input onchange="recalculateDateSet()" id="chart-time-end" value="Out of order"/></td>
 			<td>Override midi:<br><input type="checkbox" id="override-midi"></td>
 			</tr>
 			</tbody>
 			</table>
-
-			<button id="apply-changes" onclick="ds()">Revert last chnge</button>
-			<script src="script.js"></script>
-			<!--<button id="apply-changes" onclick="nextMidi()">Next Midi</button>
-			<button id="apply-changes" onclick="prevMidi()">Prev Midi</button>
-			<button id="apply-changes" onclick="addMidiBefore()">Add Midi Before</button>
-			<button id="apply-changes" onclick="addMidiAfter()">Add Midi After</button>-->
-			<button id="apply-changes" onclick="splitMidi()">Split Midi</button>
-			<button id="apply-changes" onclick="deleteMidi()">Delete Midi</button>
-			<button id="play-Midi" onclick="playMidi()">Play Midi</button>
-			<button id="save-btton" onclick="saveChanges()">Save Midi</button>
-			<button id="save-btton" onclick="saveToFile()">Save To File</button>
 			
-			<div class="mpanel" style="height:15%; min-height:300px" >
-				<div id="notes-bar" ></div>
+		<div class="footer">
+			
+
+			
+			
+			<div class="mpanel" style="height:10%; min-height:30px" >
+				
 				<div style="width: 33%; float:left;" class="mpanel">
 					<p style="color:white">Midi</p>
 					<!--<input class="button" type="image" src="img/up.png" onclick="appyMidiValue(1)" />
@@ -66,11 +59,20 @@
 					</br>
 					<input class="button" type="image" src="img/add_before.png" onclick="addMidiBefore()" />
 					<input class="button" type="image" src="img/add_after.png" onclick="addMidiAfter()" />
+					<input class="button" type="image" src="img/split.png"  onclick="splitMidi()"></input>
+					<input class="button" type="image" src="img/delete.png"  onclick="deleteMidi()"></input>
 				</div>
 				<div style="width: 33%; float:left;" class="mpanel">
 					<p style="color:white">Music</p>
 					<input class="button" type="image" src="img/stop.png" onclick="stopMidi()"/>
 					<input id="play-button" class="button" type="image" src="img/play.png"  onclick="playMidi()"/>
+					<script src="script.js"></script>
+					</br>
+			<!--<button id="apply-changes" onclick="nextMidi()">Next Midi</button>
+			<button id="apply-changes" onclick="prevMidi()">Prev Midi</button>
+			<button id="apply-changes" onclick="addMidiBefore()">Add Midi Before</button>
+			<button id="apply-changes" onclick="addMidiAfter()">Add Midi After</button>-->
+			
 				</div>
 				<div style="width: 34%; float:left;" class="mpanel">
 					<p style="color:white">Chart/File</p>
@@ -80,8 +82,9 @@
 					<input class="button" type="image" src="img/left.png" onclick="goLeft()" />
 					<input class="button" type="image" src="img/right.png" onclick="goRight()" />
 				</div>
-				
+			
 			</div>
+			
 		</div>
 
 	</body>

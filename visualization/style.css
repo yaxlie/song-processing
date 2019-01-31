@@ -21,6 +21,7 @@ body {
 }
 
 .footer {
+  background-color: #392E6C;
   position:absolute;
   bottom:0;
   width:100%;
@@ -29,12 +30,12 @@ body {
 .mpanel {
   background-color: #392E6C;
   width:100%;
-  padding-top: 3vh;
-  padding-bottom: 3vh;
+  padding-top: 1vh;
+  padding-bottom: 1vh;
 }
 
 .notes {
-  padding-bottom: 2vh;
+  padding-bottom: 0.5vh;
 }
 
 b {
@@ -46,6 +47,7 @@ b {
   margin-left: 0.1vh;
   height:8vh; 
   width: :8vh; 
+  
 }
 
 h1 {

@@ -1,4 +1,5 @@
 
+
 var rootElement = "BLE";
 var file = "";
 
@@ -218,7 +219,7 @@ chartTimee.value = endTimeOr;
 
 function recalculateDateSet(){
 	midiValues = [];
-	//nie pytać działa...
+	//nie pytac dziala...
 	var dataset4 = generateDataSet(midiFile, parseFloat(chartTimeb.value), parseFloat(chartTimee.value), file, takeEveryOr);
 	console.log(dataset4);
 	dataset = dataset4
@@ -230,6 +231,9 @@ function recalculateDateSet(){
     datasets: dataset4
   },
     options: {
+		tooltips:{
+			enabled:false
+			},
         showLines: true, // disable for all datasets
 		events: ['click'],
 		
@@ -278,6 +282,7 @@ function pointNote(id){
 function deleteMidi(selectedValue){
 	dataset.splice(selectedValue, 1);
 	midiValues.splice(selectedValue , 1);
+	midiValuesNotes.splice(selectedValue , 1);
 	updateNotesBar();
 	
 
@@ -287,6 +292,7 @@ function deleteMidi(){
 	if(selectedValue >= 0){
 		dataset.splice(selectedValue, 1);
 		midiValues.splice(selectedValue, 1);
+		midiValuesNotes.splice(selectedValue , 1);
 		yInput.value = dataset[selectedValue].data[0].y;
 			midiv.value = midiValues[selectedValue];
 			midib.value = dataset[selectedValue].data[0].x;
@@ -295,15 +301,6 @@ function deleteMidi(){
 		myChart.update();
 		//resetActivePoint();
 		updateNotesBar()
-	if(activePoint){
-		if(activePoint[0] != null){
-			var datasetIndex = activePoint[0]._datasetIndex;
-			dataset.splice(datasetIndex, 1);
-			midiValues.splice(datasetIndex, 1);
-			myChart.update();
-			resetActivePoint();
-			updateNotesBar();
-		}
 	}
 }
 
@@ -320,7 +317,7 @@ function appyMidiValue(toneChange=0){
 			if(midiv.value){
 				midiv.value = +midiv.value + toneChange;
 				midiValues[selectedValue] = parseFloat(midiv.value);
-				midiValuesNotes[datasetIndex] = parseFloat(midiv.value);
+				midiValuesNotes[selectedValue] = parseFloat(midiv.value);
 				var freq = calculateFreqFromMidi(parseFloat(midiv.value));
 				dataset[selectedValue].data[0].y = freq;
 				dataset[selectedValue].data[1].y = freq;
@@ -348,6 +345,7 @@ function splitMidi(){
 		dataset[selectedValue].data[1].x = newMidib;
 		dataset.splice( (selectedValue +1), 0, obj);
 		midiValues.splice( (selectedValue +1), 0, midiValues[selectedValue]);
+		midiValuesNotes.splice( (selectedValue +1), 0, midiValues[selectedValue]);
 		myChart.update();
 		//resetActivePoint();
 		updateNotesBar();
@@ -363,6 +361,7 @@ function addMidiBefore(){
 		var obj = {data: lebel, pointStyle: "circle",borderColor: "#ac2b2b",fill: false};
 		dataset.splice( (selectedValue ), 0, obj);
 		midiValues.splice( (selectedValue ), 0, midiValues[selectedValue]);
+		midiValuesNotes.splice( (selectedValue +1), 0, midiValues[selectedValue]);
 		myChart.update();
 		updateNotesBar();
 	}
@@ -377,6 +376,7 @@ function addMidiAfter(){
 		var obj = {data: lebel, pointStyle: "circle",borderColor: "#ac2b2b",fill: false};
 		dataset.splice( (selectedValue + 1), 0, obj);
 		midiValues.splice( (selectedValue + 1), 0, midiValues[selectedValue]);
+		midiValuesNotes.splice( (selectedValue +1), 0, midiValues[selectedValue]);
 		myChart.update();
 		updateNotesBar();
 	}
@@ -546,7 +546,6 @@ function playMidi(){
 // }
 
 function saveChanges(){
-	console.log(midiFile);
 	var j = 0;
 	while(midiFile.getElementsByTagName(rootElement)[0].children[j] != null){
 		
@@ -588,7 +587,7 @@ function scaleMinus(){
 }
 
 function goRight(){
-
+	saveChanges()
 	var newTimeb = chartTimeb.value;
 	var newTimee = chartTimee.value;
 	chartTimeb.value = newTimee;
@@ -597,7 +596,7 @@ function goRight(){
 }
 
 function goLeft(){
-
+	saveChanges()
 	var newTimeb = chartTimeb.value;
 	var newTimee = chartTimee.value;
 	if((parseFloat(newTimeb) + parseFloat(newTimeb - newTimee)) > 0){
