@@ -17,7 +17,7 @@ var midiFile = "";
   .then(text => midiFile = text)
   .then(t => midiFile = parser.parseFromString(midiFile,"text/xml"));
 */  
-
+var notes = [];
 var midiValues = [];
 var midiValuesNotes = []
 var fileIterator = -1;
@@ -31,10 +31,14 @@ var play = false;
 var audioContext = new AudioContext();
 var currentPlayingIdx = -1;
 var midiData = [];
+var selectedValue = 0;
+var redColor = "#ac2b2b"
+var orangeColor = "#ff9933"
 
 function transformMitiToArray(midi, beginTime,endTime){
 	var output = [];
 	var j = 0;
+	notes = [];
 	midiValuesNotes = [];
 	while(midiFile.getElementsByTagName(rootElement)[0].children[j] != null){
 		this.midiValues.push(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent);
@@ -48,6 +52,7 @@ function transformMitiToArray(midi, beginTime,endTime){
 		}
 		if(obj.x > beginTime){	
 			midiValuesNotes.push(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent);
+			notes.push(midi.getElementsByTagName(rootElement)[0].children[j].children[4].textContent);
 			output[j].push(obj);
 		
 			obj = {
@@ -58,6 +63,7 @@ function transformMitiToArray(midi, beginTime,endTime){
 		}
 		j = j + 1;
 	}	
+	console.log(notes);
 	console.log(midiValues);
 	console.log(midiValuesNotes);
 	return output;
@@ -74,6 +80,7 @@ function getData(time, value, beginTime, endTime){
 			dataTemp.push(obj);
 			newTime.push(time[j]);
 			if(((value[j] - value[j+1]) > chartCutConst) || ((value[j] - value[j+1]) < -chartCutConst)){
+				
 				data.push(dataTemp);
 				dataTemp = [];
 			}
@@ -85,7 +92,7 @@ function getData(time, value, beginTime, endTime){
 		data.push(dataTemp)
 	}
 	this.time = newTime;
-	console.log(data[1]);
+	console.log(data);
 	return data;
 }
 
@@ -122,6 +129,7 @@ function getDataSet(label, midi){
 		}
 		i = i + 1;
 	}
+	console.log(data);
 	return data;
 }
 
@@ -149,9 +157,6 @@ function generateDataSet(midiFileT, beginTime, endTime, file, takeEvery){
 		}
 	});
 	var dat = getData(time, value, beginTime, endTime);
-	console.log(dat);
-	//var dat2 = filter(dat,takeEvery);
-	//dat = filter(dat,takeEvery);
 	time = filter(time,1);
 	return(getDataSet(dat,midi));
 }
@@ -160,6 +165,7 @@ function generateDataSet(midiFileT, beginTime, endTime, file, takeEvery){
 var dataset = "";
 var ctx = document.getElementById("myChart");
 var myChart = new Chart(ctx, {
+	showTooltips: false,
   type: 'scatter',
   data: {
     labels: time,
@@ -167,13 +173,21 @@ var myChart = new Chart(ctx, {
     datasets: dataset
   },
     options: {
+           
         showLines: true, // disable for all datasets
-		events: ['click'],
+		events: [],
 		
 		legend: {
             display: false
-         }
+         },
+		    
+	   tooltips: {
+		  displayColors: false,
+		}
+   
+		  
 	},
+	
 	scale: {    
 		yAxes:[{
         ticks: {
@@ -182,6 +196,7 @@ var myChart = new Chart(ctx, {
 		}]
     }
 });
+console.log(myChart);
 var activePoint = null;
 
 var yInput = document.getElementById("edit-y");
@@ -260,24 +275,26 @@ function pointNote(id){
 	}
 }
 
-function deleteMidi(datasetIndex){
-	dataset.splice(datasetIndex, 1);
-	midiValues.splice(datasetIndex , 1);
+function deleteMidi(selectedValue){
+	dataset.splice(selectedValue, 1);
+	midiValues.splice(selectedValue , 1);
 	updateNotesBar()
 	
 
 }
 
 function deleteMidi(){
-	if(activePoint){
-		if(activePoint[0] != null){
-			var datasetIndex = activePoint[0]._datasetIndex;
-			dataset.splice(datasetIndex, 1);
-			midiValues.splice(datasetIndex, 1);
-			myChart.update();
-			resetActivePoint();
-			updateNotesBar()
-		}
+	if(selectedValue >= 0){
+		dataset.splice(selectedValue, 1);
+		midiValues.splice(selectedValue, 1);
+		yInput.value = dataset[selectedValue].data[0].y;
+			midiv.value = midiValues[selectedValue];
+			midib.value = dataset[selectedValue].data[0].x;
+			midie.value = dataset[selectedValue].data[1].x;
+		dataset[selectedValue].borderColor = orangeColor;
+		myChart.update();
+		//resetActivePoint();
+		updateNotesBar()
 	}
 }
 
@@ -293,11 +310,10 @@ function appyMidiValue(toneChange=0){
 		if(activePoint[0] != null){
 			if(midiv.value){
 				midiv.value = +midiv.value + toneChange;
-				var datasetIndex = activePoint[0]._datasetIndex;
-				midiValues[datasetIndex] = parseFloat(midiv.value);
+				midiValues[selectedValue] = parseFloat(midiv.value);
 				var freq = calculateFreqFromMidi(parseFloat(midiv.value));
-				dataset[datasetIndex].data[0].y = freq;
-				dataset[datasetIndex].data[1].y = freq;
+				dataset[selectedValue].data[0].y = freq;
+				dataset[selectedValue].data[1].y = freq;
 				myChart.update();
 				updateNotesBar()
 			}
@@ -306,42 +322,37 @@ function appyMidiValue(toneChange=0){
 }
 
 function resetActivePoint(){
-	if(activePoint && activePoint[0]){
-		activePoint = null;
 		midib.value = "";
 		midie.value = "";
 		midiv.value = "";
-	}
 }
 
 function splitMidi(){
-	if(activePoint && activePoint[0]){
-		var datasetIndex = activePoint[0]._datasetIndex;
+	if(selectedValue > 0){
 		var newMidib = (((parseFloat(midib.value))+ parseFloat(midie.value))/2)
 		var lebel = [
-		{y: dataset[datasetIndex].data[0].y ,x: newMidib},
-		{y: dataset[datasetIndex].data[1].y ,x: dataset[datasetIndex].data[1].x} 
+		{y: dataset[selectedValue].data[0].y ,x: newMidib},
+		{y: dataset[selectedValue].data[1].y ,x: dataset[selectedValue].data[1].x} 
 		]
 		var obj = {data: lebel, pointStyle: "circle",borderColor: "#ac2b2b",fill: false};
-		dataset[datasetIndex].data[1].x = newMidib;
-		dataset.splice( (datasetIndex +1), 0, obj);
-		midiValues.splice( (datasetIndex +1), 0, midiValues[datasetIndex]);
+		dataset[selectedValue].data[1].x = newMidib;
+		dataset.splice( (selectedValue +1), 0, obj);
+		midiValues.splice( (selectedValue +1), 0, midiValues[selectedValue]);
 		myChart.update();
-		resetActivePoint();
+		//resetActivePoint();
 		updateNotesBar()
 		
 	}
 }
 function addMidiBefore(){
-	if(activePoint && activePoint[0]){
-		var datasetIndex = activePoint[0]._datasetIndex;
+	if(selectedValue >= 0){
 		var lebel = [
-		{y: dataset[datasetIndex].data[0].y ,x: dataset[datasetIndex].data[0].x - 1},
-		{y: dataset[datasetIndex].data[0].y ,x: dataset[datasetIndex].data[0].x}
+		{y: dataset[selectedValue].data[0].y ,x: dataset[selectedValue].data[0].x - 1},
+		{y: dataset[selectedValue].data[0].y ,x: dataset[selectedValue].data[0].x}
 		]
 		var obj = {data: lebel, pointStyle: "circle",borderColor: "#ac2b2b",fill: false};
-		dataset.splice( (datasetIndex ), 0, obj);
-		midiValues.splice( (datasetIndex ), 0, midiValues[datasetIndex]);
+		dataset.splice( (selectedValue ), 0, obj);
+		midiValues.splice( (selectedValue ), 0, midiValues[selectedValue]);
 		myChart.update();
 		updateNotesBar()
 	}
@@ -349,14 +360,13 @@ function addMidiBefore(){
 
 function addMidiAfter(){
 	if(activePoint && activePoint[0]){
-		var datasetIndex = activePoint[0]._datasetIndex;
 		var lebel = [
-		{y: dataset[datasetIndex].data[0].y ,x: dataset[datasetIndex].data[1].x},
-		{y: dataset[datasetIndex].data[0].y ,x: dataset[datasetIndex].data[1].x + 1}
+		{y: dataset[selectedValue].data[0].y ,x: dataset[selectedValue].data[1].x},
+		{y: dataset[selectedValue].data[0].y ,x: dataset[selectedValue].data[1].x + 1}
 		]
 		var obj = {data: lebel, pointStyle: "circle",borderColor: "#ac2b2b",fill: false};
-		dataset.splice( (datasetIndex + 1), 0, obj);
-		midiValues.splice( (datasetIndex + 1), 0, midiValues[datasetIndex]);
+		dataset.splice( (selectedValue + 1), 0, obj);
+		midiValues.splice( (selectedValue + 1), 0, midiValues[selectedValue]);
 		myChart.update();
 		updateNotesBar()
 	}
@@ -393,15 +403,14 @@ function midiTimeValueChanger(datasetIndex){
 }
 
 function applyMidiTime(){
-	if(activePoint){
+	if(selectedValue >= 0){
 		if(midib.value && midie.value){
 			if(parseFloat(midib.value) >= 0 && parseFloat(midie.value) >= 0){
 				if(parseFloat(midib.value) < (parseFloat(midie.value) - 0.01)){
-					var datasetIndex = activePoint[0]._datasetIndex;
-					dataset[datasetIndex].data[0].x = parseFloat(midib.value);
-					dataset[datasetIndex].data[1].x = parseFloat(midie.value);
+					dataset[selectedValue].data[0].x = parseFloat(midib.value);
+					dataset[selectedValue].data[1].x = parseFloat(midie.value);
 					if(overrideMidi.checked){
-						midiTimeValueChanger(datasetIndex);
+						midiTimeValueChanger(selectedValue);
 					}
 					myChart.update();
 				}
@@ -411,23 +420,25 @@ function applyMidiTime(){
 }
 
 ctx.onclick = function(evt){
+	dataset[selectedValue].borderColor = redColor;
 	console.log(myChart.data)
 	activePoint = myChart.getElementAtEvent(evt);
 	var activePoints = myChart.getElementsAtEvent(evt);
 	if(activePoint[0] != null){
-		console.log(activePoint[0]._datasetIndex);
-		var datasetIndex = activePoint[0]._datasetIndex;
+		selectedValue = activePoint[0]._datasetIndex;
 		var index = activePoint[0]._index;
-		yInput.value = dataset[datasetIndex].data[index].y;
+		yInput.value = dataset[selectedValue].data[index].y;
 		if(activePoints[1]){
-			midiv.value = midiValues[datasetIndex];
-			midib.value = dataset[datasetIndex].data[0].x;
-			midie.value = dataset[datasetIndex].data[1].x;
+			midiv.value = midiValues[selectedValue];
+			midib.value = dataset[selectedValue].data[0].x;
+			midie.value = dataset[selectedValue].data[1].x;
+			dataset[selectedValue].borderColor = orangeColor;
 		}else{
 			midib.value = "";
 			midie.value = "";
 		}
 	}
+	myChart.update();
 };
 
 function stopMidi(){
@@ -544,7 +555,7 @@ function saveChanges(){
 }
 
 function saveToFile(){
-	console.log(new XMLSerializer().serializeToString(midiFile));(new XMLSerializer()).serializeToString(midiFile);
+	//console.log(new XMLSerializer().serializeToString(midiFile));(new XMLSerializer()).serializeToString(midiFile);
 	var file = new Blob([new XMLSerializer().serializeToString(midiFile)], {type: "text/xml"});
 	saveAs(file,"test.xml");
 }
@@ -567,6 +578,7 @@ function scaleMinus(){
 }
 
 function goRight(){
+
 	var newTimeb = chartTimeb.value;
 	var newTimee = chartTimee.value;
 	chartTimeb.value = newTimee;
@@ -575,6 +587,7 @@ function goRight(){
 }
 
 function goLeft(){
+
 	var newTimeb = chartTimeb.value;
 	var newTimee = chartTimee.value;
 	if((parseFloat(newTimeb) + parseFloat(newTimeb - newTimee)) > 0){
@@ -588,44 +601,30 @@ function goLeft(){
 	}
 }
 
-function nextMidi(){ // TODO
-	if(activePoint == null || activePoint[0] == null){
-		var datasetIndex = 0;
+function nextMidi(){
+	if(selectedValue > -1 && dataset && dataset[parseInt(selectedValue + 1)] && dataset[parseInt(selectedValue + 1)].data[0]){
+		dataset[selectedValue].borderColor = redColor;
 		var index = 0;
-		yInput.value = dataset[datasetIndex].data[index].y;
-			midiv.value = midiValues[datasetIndex];
-			midib.value = dataset[datasetIndex].data[0].x;
-			midie.value = dataset[datasetIndex].data[1].x;
-	}else{
-		if(dataset[parseInt(activePoint[0]._datasetIndex) + 1].data[0] != null){
-			activePoint[0]._datasetIndex = parseInt(activePoint[0]._datasetIndex) + 1;
-			var datasetIndex = activePoint[0]._datasetIndex
-			var index = 0
-			yInput.value = dataset[datasetIndex].data[index].y;
-				midiv.value = midiValues[datasetIndex];
-				midib.value = dataset[datasetIndex].data[0].x;
-				midie.value = dataset[datasetIndex].data[1].x;
-		}
+		selectedValue = parseInt(selectedValue) + 1;
+		yInput.value = dataset[selectedValue].data[index].y;
+			midiv.value = midiValues[selectedValue];
+			midib.value = dataset[selectedValue].data[0].x;
+			midie.value = dataset[selectedValue].data[1].x;
+		dataset[selectedValue].borderColor = orangeColor;
+		myChart.update();
 	}
 }
 function prevMidi(){ // TODO
-	if(activePoint == null || activePoint[0] == null){
-		var datasetIndex = 0;
+	if(selectedValue > 0){
+		dataset[selectedValue].borderColor = redColor;
+		selectedValue = parseInt(selectedValue) - 1;
 		var index = 0;
-		yInput.value = dataset[datasetIndex].data[index].y;
-			midiv.value = midiValues[datasetIndex];
-			midib.value = dataset[datasetIndex].data[0].x;
-			midie.value = dataset[datasetIndex].data[1].x;
-	}else{
-		if(activePoint[0]._datasetIndex > 0){
-			activePoint[0]._datasetIndex = parseInt(activePoint[0]._datasetIndex) - 1
-			var datasetIndex = activePoint[0]._datasetIndex
-			var index = 0
-			yInput.value = dataset[datasetIndex].data[index].y;
-				midiv.value = midiValues[datasetIndex];
-				midib.value = dataset[datasetIndex].data[0].x;
-				midie.value = dataset[datasetIndex].data[1].x;
-		}
+		yInput.value = dataset[selectedValue].data[index].y;
+			midiv.value = midiValues[selectedValue];
+			midib.value = dataset[selectedValue].data[0].x;
+			midie.value = dataset[selectedValue].data[1].x;
+		dataset[selectedValue].borderColor = orangeColor;
+		myChart.update();
 	}
 }
 
