@@ -48,7 +48,7 @@ public class Host {
             DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
             Document document = documentBuilder.newDocument();
 
-            Element root = document.createElement(filename);
+            Element root = document.createElement("Song_" + filename);
             document.appendChild(root);
 
 
@@ -164,31 +164,41 @@ public class Host {
 
     private static void createPropertiesAndRdf(String filename,Path relativePathString,File file) throws Exception {
 
-        Properties props = new Properties();
+
         OutputStream output = null;
 
         String[] relativePathSplitted = relativePathString.toString().split("\\\\");
         String tempPath="";
-        boolean publicationRoot = true;
+
         boolean groupPub=true;
 
         for (String s : relativePathSplitted) {
+            boolean publicationRoot = false;
+            Properties props = new Properties();
+
             tempPath = tempPath + s + "\\";
             output = new FileOutputStream(tempPath + "\\" + "publication.properties");
 
             props.setProperty("publication.metadataFile", "metadata.rdf");
-            props.setProperty("publication.name", filename);
+            props.setProperty("publication.name", s);
+
+            if (tempPath.equals(relativePathString.toString() + "\\")) {
+                groupPub = false;
+            }
+            
+            if(s==relativePathSplitted[0]){
+                publicationRoot=true;
+            }
 
             if (publicationRoot) {
+
                 props.setProperty("publication.destination.directoryId", "1044");
-                //  props.setProperty("publication.collections", "6");
+
                 props.setProperty("publication.published", "true");
 
             }
-            System.out.println(tempPath);
-            System.out.println(relativePathString);
-            if (tempPath.equals(relativePathString.toString() + "\\")) {
-                groupPub=false;
+
+            if (!groupPub) {
                 props.setProperty("publication.mainFile", filename + ".mp3");
             }
 
@@ -211,7 +221,7 @@ public class Host {
             title.appendChild(document.createTextNode(s));
 
             description.appendChild(title);
-            if(groupPub) {
+            if(!groupPub) {
                 String[] data = Helper.getDurationAndName(file);
                 String dataString = "";
 
@@ -254,7 +264,7 @@ public class Host {
 
         path = new File(".").getCanonicalPath();
         relativePathString = relativePath.toString().split("\\.")[0] + "\\";
-        System.out.println(relativePathString);
+
         boolean createDirectory = new File(path + "\\" + relativePathString).mkdirs();
 
         File newmp3= new File (path + "\\" + relativePathString + filename + ".mp3"  );

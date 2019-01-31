@@ -32,7 +32,6 @@ public class Main {
                     path = path.substring(0, path.length() - 1);
                 }
 
-                System.out.println(path);
                 pathsToCheckList = Files.walk(Paths.get(path))
                         .filter(s -> s.toString().endsWith(".mp3"))
                         .collect(toList());
