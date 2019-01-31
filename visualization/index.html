@@ -33,6 +33,8 @@
 			<td>time begin:<br><input onchange="recalculateDateSet()" id="chart-time-begin" value="Out of order"/></td>
 			<td>time   end:<br><input onchange="recalculateDateSet()" id="chart-time-end" value="Out of order"/></td>
 			<td>Override midi:<br><input type="checkbox" id="override-midi"></td>
+			<input id="loadFiles" type="file" accept=".xml" onchange="changeEventHandler(event)"/>
+			<input id="loadFiles" type="file" accept=".txt" onchange="changeEventHandler(event)"/>
 			</tr>
 			</tbody>
 			</table>

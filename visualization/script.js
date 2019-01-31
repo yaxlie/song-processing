@@ -667,6 +667,31 @@ function handleFileSelect(evt) {
 	}
 	
 }
+function changeEventHandler(evt){
+	console.log(evt);
+	if(evt.srcElement.files[0].type === 'text/xml'){
+		var f = evt.srcElement.files[0],
+			reader = new FileReader();
+		reader.onload = function(event) {
+			var res = event.target.result;
+			midiFile = parser.parseFromString(res,"text/xml");
+			start();
+			document.getElementById("input-xml").remove();
+		};
+		reader.readAsText(f);
+	}else if(evt.srcElement.files[0].type === 'text/plain'){
+		var f = evt.srcElement.files[0],
+			reader = new FileReader();
+		reader.onload = function(event) {
+			file = event.target.result;
+			start();
+			document.getElementById("input-plane").remove();
+		};
+		reader.readAsText(f);
+		start();
+	}
+}
+
 
 function start(){
 	if(file != "" && midiFile != ""){
@@ -712,5 +737,7 @@ function note(value){
 
 // Setup the dnd listeners.
 var dropZone = document.getElementById('myChart');
+var loadFiles2 = document.getElementById('loadFiles');
 dropZone.addEventListener('dragover', handleDragOver, false);
 dropZone.addEventListener('drop', handleFileSelect, false);
+loadFiles2.addEventListener('DOMContentLoaded',changeEventHandler, false);
