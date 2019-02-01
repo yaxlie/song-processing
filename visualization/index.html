@@ -17,9 +17,24 @@
 		</div>
 		
 		
-		<div class="wrapper">
-			<canvas id="myChart" width="1600" height="900"></canvas>
-		</div>
+		<table align="center">
+			<tbody>
+				<tr>
+					<td>
+						<div class="wrapper">
+							<canvas id="myChart" width="1600" height="900"></canvas>
+						</div>
+					</td>
+					<td>
+						<div style="overflow-y: scroll; height:400px;" id="file-list">
+							<br>sadasd
+							<br>dasdas
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+
 		<div id="input-plane" style="color:red;">Nie ma pliku z przebiegiem funkcji</div>
 		<div id="input-xml" style="color:red;">Nie ma pliku xml z midi</div>
 		<table align="center">
@@ -37,7 +52,7 @@
 			<input id="loadFiles" type="file" accept=".txt" onchange="changeEventHandler(event)"/>
 			</tr>
 			</tbody>
-			</table>
+		</table>
 			
 		<div class="footer">
 			

@@ -735,6 +735,24 @@ function note(value){
     return "¯\\_(ツ)_/¯";
 }
 
+function loadServerFiles(){
+	var fs = require('fs');
+	var files = fs.readdirSync('./songs/');
+
+	var filesList = document.getElementById("file-list");
+	while (filesList.firstChild) {
+		filesList.removeChild(filesList.firstChild);
+	}
+
+	for(var i=0; i<files.length-1; i++){
+		if(true){
+			filesList.innerHTML += '<b style="color:black"> ' + files[i] +' </b>';
+		}
+	}
+}
+
+loadServerFiles()
+
 // Setup the dnd listeners.
 var dropZone = document.getElementById('myChart');
 var loadFiles2 = document.getElementById('loadFiles');
