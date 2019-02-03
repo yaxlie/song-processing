@@ -750,6 +750,17 @@ function note(value){
     return "¯\\_(ツ)_/¯";
 }
 
+function loadSongsList(){
+	$.get('songs/list', function(response) {
+			var list = response;
+			var lines = list.split('\n');
+			for(var i = 0; i < lines.length; i++){
+			    song = lines[i].trim();;
+			    var listNode = document.getElementById("file-list");
+				listNode.innerHTML += '<br><button type="button"  onclick="loadSong(\'' + song + '\')">' + song + '</button>';
+			}
+		});
+}
 
 function loadSong(title){
 	// .xml
@@ -774,6 +785,7 @@ function loadSong(title){
 }
 
 
+loadSongsList();
 // Setup the dnd listeners.
 var dropZone = document.getElementById('myChart');
 var loadFiles2 = document.getElementById('loadFiles');
