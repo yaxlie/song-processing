@@ -759,7 +759,7 @@ function loadSongsList(){
 			for(var i = 0; i < lines.length; i++){
 			    song = lines[i].trim();;
 			    var listNode = document.getElementById("file-list");
-				listNode.innerHTML += '<br><button type="button"  onclick="loadSong(\'' + song + '\')">' + song + '</button>';
+				listNode.innerHTML += '<br><button class="song-button" style="width:20vh;" onclick="loadSong(\'' + song + '\')">' + song + '</button>';
 			}
 		});
 }
