@@ -6,6 +6,7 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 		<script src="FileSaver.js"></script>
+		<script src="jquery-3.3.1.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css">
 		
@@ -27,16 +28,13 @@
 					</td>
 					<td>
 						<div style="overflow-y: scroll; height:400px;" id="file-list">
-							<br>sadasd
-							<br>dasdas
+							<br><button type="button"  onclick="loadSong('TP0264A_01')">TP0264A_01</button>
+							<br><button type="button" onclick="loadSong('TP0264A_02')">TP0264A_02</button>
 						</div>
 					</td>
 				</tr>
 			</tbody>
 		</table>
-
-		<div id="input-plane" style="color:red;">Nie ma pliku z przebiegiem funkcji</div>
-		<div id="input-xml" style="color:red;">Nie ma pliku xml z midi</div>
 		<table align="center">
 			<tbody>
 			<tr>
@@ -48,8 +46,6 @@
 			<td>time begin:<br><input onchange="recalculateDateSet()" id="chart-time-begin" value="Out of order"/></td>
 			<td>time   end:<br><input onchange="recalculateDateSet()" id="chart-time-end" value="Out of order"/></td>
 			<td>Override midi:<br><input type="checkbox" id="override-midi"></td>
-			<input id="loadFiles" type="file" accept=".xml" onchange="changeEventHandler(event)"/>
-			<input id="loadFiles" type="file" accept=".txt" onchange="changeEventHandler(event)"/>
 			</tr>
 			</tbody>
 		</table>
@@ -85,6 +81,11 @@
 					<input id="play-button" class="button" type="image" src="img/play.png"  onclick="playMidi()"/>
 					<script src="script.js"></script>
 					</br>
+						<audio controls id="audio-player">
+							<source src="songs\TP0264A_01\TP0264A_01.mp3" type="audio/mpeg">
+							Your browser does not support the audio element.
+						</audio>
+						<input type="checkbox" id="double-sound" name="double-sound" value="play both">
 			<!--<button id="apply-changes" onclick="nextMidi()">Next Midi</button>
 			<button id="apply-changes" onclick="prevMidi()">Prev Midi</button>
 			<button id="apply-changes" onclick="addMidiBefore()">Add Midi Before</button>

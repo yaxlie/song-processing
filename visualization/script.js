@@ -452,6 +452,11 @@ ctx.onclick = function(evt){
 };
 
 function stopMidi(){
+	var doublePlay = document.getElementById('double-sound').checked;
+	if (doublePlay){
+		document.getElementById('audio-player').load();
+	}
+
 	pause = false;
 	play = false;
 	var button = document.getElementById("play-button").src = "img/play.png";
@@ -463,9 +468,12 @@ function stopMidi(){
 }
 
 function playMidi(){
-
+	var doublePlay = document.getElementById('double-sound').checked;
 	// Odtwarzanie jest zapauzowane 
 	if(play && pause) {
+		if (doublePlay){
+			document.getElementById('audio-player').play();
+		}
 	    audioContext.resume().then(function() {
 	    	pause = false;
 	      	//audioChecker(1000);
@@ -475,6 +483,9 @@ function playMidi(){
 	// Nagranie jest odtwarzane, chcemy dać pauzę
 	else if(play && !pause){
 		pause = true;
+		if (doublePlay){
+			document.getElementById('audio-player').pause();
+		}
 	  	audioContext.suspend().then(function() {
       		button.src = "img/resume.png";
     	});
@@ -526,6 +537,11 @@ function playMidi(){
 				
 			}
 			play = !play;
+			if (doublePlay){
+				var player = document.getElementById('audio-player');
+				//player.currentTime = beginTime;
+				player.play();
+			}
 			//audioChecker(1000);
 	}
 }
@@ -651,7 +667,7 @@ function handleFileSelect(evt) {
 			var res = event.target.result;
 			midiFile = parser.parseFromString(res,"text/xml");
 			start();
-			document.getElementById("input-xml").remove();
+			//document.getElementById("input-xml").remove();
 		};
 		reader.readAsText(f);
 	}else if(evt.dataTransfer.files[0].type === 'text/plain'){
@@ -660,7 +676,7 @@ function handleFileSelect(evt) {
 		reader.onload = function(event) {
 			file = event.target.result;
 			start();
-			document.getElementById("input-plane").remove();
+			//document.getElementById("input-plane").remove();
 		};
 		reader.readAsText(f);
 		start();
@@ -691,7 +707,6 @@ function changeEventHandler(evt){
 		start();
 	}
 }
-
 
 function start(){
 	if(file != "" && midiFile != ""){
@@ -735,27 +750,33 @@ function note(value){
     return "¯\\_(ツ)_/¯";
 }
 
-function loadServerFiles(){
-	var fs = require('fs');
-	var files = fs.readdirSync('./songs/');
 
-	var filesList = document.getElementById("file-list");
-	while (filesList.firstChild) {
-		filesList.removeChild(filesList.firstChild);
-	}
-
-	for(var i=0; i<files.length-1; i++){
-		if(true){
-			filesList.innerHTML += '<b style="color:black"> ' + files[i] +' </b>';
-		}
-	}
+function loadSong(title){
+	// .xml
+	$.get('songs/' + title + '/' + title + '.xml', function(response_xml) {
+    	var file_xml = response_xml;
+    	midiFile = file_xml;
+    	//console.log(.documentElement);
+    	//console.log(midiFile);
+		// .txt
+		$.get('songs/' + title + '/' + title + '.txt', function(response_txt) {
+			// .mp3
+			var player = document.getElementById('audio-player');
+			player.src = 'songs/' + title + '/' + title + '.mp3';
+			//
+	    	var file_txt = response_txt;
+	    	//console.log(file);
+	    	file = file_txt;
+	    	chartTimee.value = 10;
+	    	recalculateDateSet();
+		});
+	});
 }
 
-loadServerFiles()
 
 // Setup the dnd listeners.
 var dropZone = document.getElementById('myChart');
 var loadFiles2 = document.getElementById('loadFiles');
 dropZone.addEventListener('dragover', handleDragOver, false);
 dropZone.addEventListener('drop', handleFileSelect, false);
-loadFiles2.addEventListener('DOMContentLoaded',changeEventHandler, false);
+// loadFiles2.addEventListener('DOMContentLoaded',changeEventHandler, false);
