@@ -64,9 +64,9 @@ function transformMitiToArray(midi, beginTime,endTime){
 		}
 		j = j + 1;
 	}	
-	console.log(notes);
-	console.log(midiValues);
-	console.log(midiValuesNotes);
+	// console.log(notes);
+	// console.log(midiValues);
+	// console.log(midiValuesNotes);
 	return output;
 }
 
@@ -93,7 +93,7 @@ function getData(time, value, beginTime, endTime){
 		data.push(dataTemp)
 	}
 	this.time = newTime;
-	console.log(data);
+	// console.log(data);
 	return data;
 }
 
@@ -110,8 +110,8 @@ function filter(data, timelaps){
 }
 
 function getDataSet(label, midi){
-	console.log(midi);
-	console.log(label);
+	// console.log(midi);
+	// console.log(label);
 	var data = [];
 	midiData = [];
 	var i = 0;
@@ -122,7 +122,7 @@ function getDataSet(label, midi){
 		i = i + 1;
 	}
 	i = 0;
-	console.log(midiData)
+	// console.log(midiData)
 	while(i < label.length){
 		if(label[i].length > 10){
 			var obj = {data: label[i], radius:0, borderColor: "#3e95cd",fill: false};
@@ -130,7 +130,7 @@ function getDataSet(label, midi){
 		}
 		i = i + 1;
 	}
-	console.log(data);
+	// console.log(data);
 	return data;
 }
 
@@ -197,7 +197,7 @@ var myChart = new Chart(ctx, {
 		}]
     }
 });
-console.log(myChart);
+// console.log(myChart);
 var activePoint = null;
 
 var yInput = document.getElementById("edit-y");
@@ -221,7 +221,7 @@ function recalculateDateSet(){
 	midiValues = [];
 	//nie pytac dziala...
 	var dataset4 = generateDataSet(midiFile, parseFloat(chartTimeb.value), parseFloat(chartTimee.value), file, takeEveryOr);
-	console.log(dataset4);
+	// console.log(dataset4);
 	dataset = dataset4
 	myChart = new Chart(ctx, {
   type: 'scatter',
@@ -267,7 +267,7 @@ function updateNotesBar(){
 }
 
 function pointNote(id){
-	console.log(id);
+	// console.log(id);
 	var notesBar = document.getElementById("notes-bar");
 	if(id>0){
 		var prevNote = notesBar.childNodes[id-1];
