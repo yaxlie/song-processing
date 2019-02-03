@@ -136,6 +136,7 @@ function getDataSet(label, midi){
 
 function generateDataSet(midiFileT, beginTime, endTime, file, takeEvery){
 	var midi = transformMitiToArray(midiFileT, beginTime, endTime)
+	file = file.replace(/\n/ig, '').replace( /\s\s+/g, ' ' );
 	var line = file.split(" ");
 	
 	var lineTemp = line.filter(function(li){
@@ -143,6 +144,7 @@ function generateDataSet(midiFileT, beginTime, endTime, file, takeEvery){
 			return li;
 		}
 	});
+
 	var i = -1;
 	var time = lineTemp.filter(function(li){
 		i = i + 1;
