@@ -1,23 +1,36 @@
+var root=contentUrl.split("/")
+var rootEl=root[root.length-1]
+var rootElement = "Song_" + rootEl.replace(".mp3","")
+console.log(rootElement)
+file = "";
+midiFile = "";
 
-
-var rootElement = "BLE";
-var file = "";
-
-
-/*fetch('/input.wav.txt')
-  .then(res => res.text())
-  .then(data => file = data)*/
-
+var fileTXTAddr=contentUrl.replace(".mp3",".txt")
+var fileXMLAddr=contentUrl.replace(".mp3",".xml")
+var fileMP3Addr=contentUrl;
+   
+fetch(fileTXTAddr).then(function(dogBiscuits) {
+  dogBiscuits.text().then(function(text) {
+	  
+    file = text;
+	console.log(file);
+	start();
+  });
+});
    
 console.log(file);
 parser = new DOMParser();
 
-var midiFile = "";
-/*fetch('input.xml')
-  .then(response => response.text())
-  .then(text => midiFile = text)
-  .then(t => midiFile = parser.parseFromString(midiFile,"text/xml"));
-*/  
+fetch(fileXMLAddr).then(function(dogBiscuits) {
+  dogBiscuits.text().then(function(text) {
+	  
+    midiFile = text;
+	midiFile = parser.parseFromString(midiFile,"text/xml")
+	console.log(midiFile);
+	start();
+  });
+});
+
 var notes = [];
 var midiValues = [];
 var midiValuesNotes = []
@@ -752,42 +765,16 @@ function note(value){
     return "¯\\_(ツ)_/¯";
 }
 
-function loadSongsList(){
-	$.get('songs/list', function(response) {
-			var list = response;
-			var lines = list.split('\n');
-			for(var i = 0; i < lines.length; i++){
-			    song = lines[i].trim();;
-			    var listNode = document.getElementById("file-list");
-				listNode.innerHTML += '<br><button class="song-button" style="width:20vh;" onclick="loadSong(\'' + song + '\')">' + song + '</button>';
-			}
-		});
-}
-
-function loadSong(title){
-	// .xml
-	$.get('songs/' + title + '/' + title + '.xml', function(response_xml) {
-    	var file_xml = response_xml;
-    	midiFile = file_xml;
-    	//console.log(.documentElement);
-    	//console.log(midiFile);
-		// .txt
-		$.get('songs/' + title + '/' + title + '.txt', function(response_txt) {
-			// .mp3
-			var player = document.getElementById('audio-player');
-			player.src = 'songs/' + title + '/' + title + '.mp3';
-			//
-	    	var file_txt = response_txt;
-	    	//console.log(file);
-	    	file = file_txt;
-	    	chartTimee.value = 10;
-	    	recalculateDateSet();
-		});
-	});
+function loadSong(){
+	var player = document.getElementById('audio-player');
+	player.src = fileMP3Addr;
+	//
+	chartTimee.value = 10;
+	recalculateDateSet();
 }
 
 
-loadSongsList();
+loadSong();
 // Setup the dnd listeners.
 var dropZone = document.getElementById('myChart');
 var loadFiles2 = document.getElementById('loadFiles');
