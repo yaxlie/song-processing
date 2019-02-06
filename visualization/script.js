@@ -1,3 +1,4 @@
+var contentUrl = 'https://raw.githubusercontent.com/Fehu4/Kik/master/TP0052B_01.mp3';
 var root=contentUrl.split("/")
 var rootEl=root[root.length-1]
 var rootElement = "Song_" + rootEl.replace(".mp3","")
@@ -774,7 +775,10 @@ function loadSong(){
 }
 
 
-loadSong();
+window.addEventListener('load', function() {
+	loadSong();
+    console.log('loading complete')
+})
 // Setup the dnd listeners.
 var dropZone = document.getElementById('myChart');
 var loadFiles2 = document.getElementById('loadFiles');
