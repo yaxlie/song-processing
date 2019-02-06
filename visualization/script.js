@@ -601,7 +601,7 @@ function saveCsvToFile(){
 	// console.log(maxI);
 	var csv = [];
 	while (i < maxI){
-		_time = parseFloat(midiData[i].data[1].x).toFixed(2);
+		_time = parseFloat(midiData[i].data[1].x - midiData[i].data[0].x).toFixed(2);
 		var _note = note(midiValuesNotes[i])
 		csv[i] = _note.toString() + '\t' + _time.toString();
 		i++;
