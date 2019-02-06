@@ -461,12 +461,15 @@ ctx.onclick = function(evt){
 	myChart.update();
 };
 
-function stopMidi(){
+
+function stopOriginAudio(){
 	var doublePlay = document.getElementById('double-sound').checked;
 	if (doublePlay){
 		document.getElementById('audio-player').load();
 	}
-
+}
+function stopMidi(){
+	stopOriginAudio();
 	pause = false;
 	play = false;
 	var button = document.getElementById("play-button").src = "img/play.png";
@@ -535,6 +538,7 @@ function playMidi(){
 
 				if(i===maxI){
 					o.onended = function() {
+						stopOriginAudio();
 						id += 1;
 						play = false;
 						pause = false;
