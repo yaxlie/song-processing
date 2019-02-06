@@ -232,6 +232,12 @@ chartTimeb.value = beginTimeOr;
 chartTimee.value = endTimeOr;
 
 
+function recalculateNoChartUpdate(){
+	midiValues = [];
+	var dataset4 = generateDataSet(midiFile, parseFloat(chartTimeb.value), parseFloat(chartTimee.value), file, takeEveryOr);
+	myChart.update();
+	updateNotesBar();
+}
 
 function recalculateDateSet(){
 	midiValues = [];
@@ -372,6 +378,7 @@ function addMidiBefore(){
 		dataset.splice( (selectedValue ), 0, obj);
 		midiValues.splice( (selectedValue ), 0, midiValues[selectedValue]);
 		midiValuesNotes.splice( (selectedValue +1), 0, midiValues[selectedValue]);
+		saveChanges();
 		myChart.update();
 		updateNotesBar();
 	}
@@ -387,6 +394,8 @@ function addMidiAfter(){
 		dataset.splice( (selectedValue + 1), 0, obj);
 		midiValues.splice( (selectedValue + 1), 0, midiValues[selectedValue]);
 		midiValuesNotes.splice( (selectedValue +1), 0, midiValues[selectedValue]);
+		recalculateDateSet();
+		saveChanges();
 		myChart.update();
 		updateNotesBar();
 	}
@@ -507,6 +516,7 @@ function playMidi(){
 	// Nagranie jest puste. Zakończyło się, lub nie było jeszcze włączane.
 	else if(!play && !pause)
 	{
+		recalculateNoChartUpdate();
 		currentPlayingIdx = 0;
 		pointNote(0);
 		console.log(midiData);
