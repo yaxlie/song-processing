@@ -595,7 +595,7 @@ function saveToFile(){
 	saveAs(file,"test.xml");
 }
 
-function scalePlus(){
+function scaleMinus(){
 	if (parseFloat(chartTimeb.value) > 0.5){
 		chartTimeb.value = parseFloat(chartTimeb.value) - 0.5;
 		chartTimee.value = parseFloat(chartTimee.value) + 0.5;
@@ -606,7 +606,7 @@ function scalePlus(){
 	recalculateDateSet()
 }
 
-function scaleMinus(){
+function scalePlus(){
 	chartTimeb.value = parseFloat(chartTimeb.value) + 0.5;
 	chartTimee.value = parseFloat(chartTimee.value) - 0.5;
 	recalculateDateSet()
