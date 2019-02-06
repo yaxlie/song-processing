@@ -295,18 +295,6 @@ function pointNote(id){
 	}
 }
 
-function deleteMidi(selectedValue){
-	dataset.splice(selectedValue, 1);
-	midiValues.splice(selectedValue , 1);
-	notes.splice(selectedValue, 1);
-	midiData.splice(selectedValue, 1);
-	midiValuesNotes.splice(selectedValue , 1);
-	myChart.update();
-	updateNotesBar();
-	
-
-}
-
 function deleteMidi(){
 	if(selectedValue >= 0){
 		dataset.splice(selectedValue, 1);
@@ -315,10 +303,11 @@ function deleteMidi(){
 		midiData.splice(selectedValue, 1);
 		midiValuesNotes.splice(selectedValue , 1);
 		yInput.value = dataset[selectedValue].data[0].y;
-			midiv.value = midiValues[selectedValue];
-			midib.value = dataset[selectedValue].data[0].x;
-			midie.value = dataset[selectedValue].data[1].x;
+		midiv.value = midiValues[selectedValue];
+		midib.value = dataset[selectedValue].data[0].x;
+		midie.value = dataset[selectedValue].data[1].x;
 		dataset[selectedValue].borderColor = orangeColor;
+		saveChanges();
 		myChart.update();
 		//resetActivePoint();
 		updateNotesBar()
