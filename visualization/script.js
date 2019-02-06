@@ -365,7 +365,7 @@ function splitMidi(){
 		myChart.update();
 		//resetActivePoint();
 		updateNotesBar();
-		
+		recalculateNoChartUpdate();
 	}
 }
 function addMidiBefore(){
@@ -381,6 +381,7 @@ function addMidiBefore(){
 		saveChanges();
 		myChart.update();
 		updateNotesBar();
+		recalculateNoChartUpdate();
 	}
 }
 
@@ -398,6 +399,7 @@ function addMidiAfter(){
 		saveChanges();
 		myChart.update();
 		updateNotesBar();
+		recalculateNoChartUpdate();
 	}
 }
 
@@ -472,6 +474,7 @@ ctx.onclick = function(evt){
 
 
 function stopOriginAudio(){
+	console.log('stop audio player');
 	var doublePlay = document.getElementById('double-sound').checked;
 	if (doublePlay){
 		document.getElementById('audio-player').load();
@@ -516,7 +519,6 @@ function playMidi(){
 	// Nagranie jest puste. Zakończyło się, lub nie było jeszcze włączane.
 	else if(!play && !pause)
 	{
-		recalculateNoChartUpdate();
 		currentPlayingIdx = 0;
 		pointNote(0);
 		console.log(midiData);
