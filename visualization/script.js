@@ -72,7 +72,7 @@ function transformMitiToArray(midi, beginTime,endTime){
 		
 			obj = {
 				y: calculateFreqFromMidi(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent)
-			  , x: parseFloat(midi.getElementsByTagName(rootElement)[0].children[j].children[0].textContent) + parseFloat(midi.getElementsByTagName("BLE")[0].children[j].children[1].textContent)
+			  , x: parseFloat(midi.getElementsByTagName(rootElement)[0].children[j].children[0].textContent) + parseFloat(midi.getElementsByTagName(rootElement)[0].children[j].children[1].textContent)
 				};
 			output[j].push(obj);
 		}
