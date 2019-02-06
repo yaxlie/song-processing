@@ -19,7 +19,7 @@ fetch(fileTXTAddr).then(function(dogBiscuits) {
   });
 });
    
-console.log(file);
+//console.log(file);
 parser = new DOMParser();
 
 fetch(fileXMLAddr).then(function(dogBiscuits) {
@@ -395,7 +395,6 @@ function addMidiAfter(){
 		dataset.splice( (selectedValue + 1), 0, obj);
 		midiValues.splice( (selectedValue + 1), 0, midiValues[selectedValue]);
 		midiValuesNotes.splice( (selectedValue +1), 0, midiValues[selectedValue]);
-		recalculateDateSet();
 		saveChanges();
 		myChart.update();
 		updateNotesBar();
