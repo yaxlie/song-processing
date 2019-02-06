@@ -595,6 +595,26 @@ function saveToFile(){
 	saveAs(file,"test.xml");
 }
 
+function saveCsvToFile(){
+	var i = 0;
+	var maxI = midiData.length - 1;
+	// console.log(maxI);
+	var csv = [];
+	while (i < maxI){
+		_time = parseFloat(midiData[i].data[0].x);
+		var _note = note(midiValuesNotes[i])
+		csv[i] = _note.toString() + '\t' + _time.toString();
+		i++;
+	}
+	csv = csv.join('\n');
+
+	var contentType = 'text/csv';
+	var csvFile = new Blob([csv], {type: contentType});
+
+	//console.log(new XMLSerializer().serializeToString(midiFile));(new XMLSerializer()).serializeToString(midiFile);
+	saveAs(csvFile, rootElement.toString() + ".csv");
+}
+
 function scaleMinus(){
 	if (parseFloat(chartTimeb.value) > 0.5){
 		chartTimeb.value = parseFloat(chartTimeb.value) - 0.5;
