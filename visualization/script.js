@@ -592,7 +592,7 @@ function saveChanges(){
 function saveToFile(){
 	//console.log(new XMLSerializer().serializeToString(midiFile));(new XMLSerializer()).serializeToString(midiFile);
 	var file = new Blob([new XMLSerializer().serializeToString(midiFile)], {type: "text/xml"});
-	saveAs(file,"test.xml");
+	saveAs(file, rootElement.toString() + ".xml");
 }
 
 function saveCsvToFile(){
