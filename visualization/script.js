@@ -14,7 +14,7 @@ fetch(fileTXTAddr).then(function(dogBiscuits) {
   dogBiscuits.text().then(function(text) {
 	  
     file = text;
-	console.log(file);
+	//console.log(file);
 	start();
   });
 });
@@ -56,16 +56,17 @@ function transformMitiToArray(midi, beginTime,endTime){
 	notes = [];
 	midiValuesNotes = [];
 	while(midiFile.getElementsByTagName(rootElement)[0].children[j] != null){
-		this.midiValues.push(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent);
 		output[j] = [];
 		var obj = {
 			y: calculateFreqFromMidi(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent)
 		  , x: midi.getElementsByTagName(rootElement)[0].children[j].children[0].textContent
 			};
 		if(obj.x > endTime){
+			console.log('break' + midiValues)
 			break;
 		}
 		if(obj.x > beginTime){	
+			this.midiValues.push(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent);
 			midiValuesNotes.push(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent);
 			notes.push(midi.getElementsByTagName(rootElement)[0].children[j].children[4].textContent);
 			output[j].push(obj);
@@ -303,20 +304,26 @@ function pointNote(id){
 
 function deleteMidi(){
 	if(selectedValue >= 0){
+		console.log(midiFile)
 		dataset.splice(selectedValue, 1);
 		midiValues.splice(selectedValue, 1);
 		notes.splice(selectedValue, 1);
 		midiData.splice(selectedValue, 1);
+		var child = midiFile.getElementsByTagName(rootElement)[0].children[selectedValue];
+		midiFile.documentElement.removeChild(child);
+		//console.log(midiFile)
 		midiValuesNotes.splice(selectedValue , 1);
 		yInput.value = dataset[selectedValue].data[0].y;
 		midiv.value = midiValues[selectedValue];
 		midib.value = dataset[selectedValue].data[0].x;
 		midie.value = dataset[selectedValue].data[1].x;
 		dataset[selectedValue].borderColor = orangeColor;
+		//recalculateDateSet();
 		saveChanges();
 		myChart.update();
 		//resetActivePoint();
 		updateNotesBar()
+		//recalculateDateSet();
 	}
 }
 
