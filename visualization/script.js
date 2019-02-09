@@ -1,23 +1,37 @@
+var contentUrl = 'https://raw.githubusercontent.com/Fehu4/Kik/master/TP0052B_01.mp3';
+var root=contentUrl.split("/")
+var rootEl=root[root.length-1]
+var rootElement = "Song_" + rootEl.replace(".mp3","")
+console.log(rootElement)
+file = "";
+midiFile = "";
 
-
-var rootElement = "BLE";
-var file = "";
-
-
-/*fetch('/input.wav.txt')
-  .then(res => res.text())
-  .then(data => file = data)*/
-
+var fileTXTAddr=contentUrl.replace(".mp3",".txt")
+var fileXMLAddr=contentUrl.replace(".mp3",".xml")
+var fileMP3Addr=contentUrl;
    
-console.log(file);
+fetch(fileTXTAddr).then(function(dogBiscuits) {
+  dogBiscuits.text().then(function(text) {
+	  
+    file = text;
+	//console.log(file);
+	start();
+  });
+});
+   
+//console.log(file);
 parser = new DOMParser();
 
-var midiFile = "";
-/*fetch('input.xml')
-  .then(response => response.text())
-  .then(text => midiFile = text)
-  .then(t => midiFile = parser.parseFromString(midiFile,"text/xml"));
-*/  
+fetch(fileXMLAddr).then(function(dogBiscuits) {
+  dogBiscuits.text().then(function(text) {
+	  
+    midiFile = text;
+	midiFile = parser.parseFromString(midiFile,"text/xml")
+	console.log(midiFile);
+	start();
+  });
+});
+
 var notes = [];
 var midiValues = [];
 var midiValuesNotes = []
@@ -42,31 +56,32 @@ function transformMitiToArray(midi, beginTime,endTime){
 	notes = [];
 	midiValuesNotes = [];
 	while(midiFile.getElementsByTagName(rootElement)[0].children[j] != null){
-		this.midiValues.push(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent);
 		output[j] = [];
 		var obj = {
 			y: calculateFreqFromMidi(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent)
 		  , x: midi.getElementsByTagName(rootElement)[0].children[j].children[0].textContent
 			};
 		if(obj.x > endTime){
+			console.log('break' + midiValues)
 			break;
 		}
 		if(obj.x > beginTime){	
+			this.midiValues.push(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent);
 			midiValuesNotes.push(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent);
 			notes.push(midi.getElementsByTagName(rootElement)[0].children[j].children[4].textContent);
 			output[j].push(obj);
 		
 			obj = {
 				y: calculateFreqFromMidi(midi.getElementsByTagName(rootElement)[0].children[j].children[3].textContent)
-			  , x: parseFloat(midi.getElementsByTagName(rootElement)[0].children[j].children[0].textContent) + parseFloat(midi.getElementsByTagName("BLE")[0].children[j].children[1].textContent)
+			  , x: parseFloat(midi.getElementsByTagName(rootElement)[0].children[j].children[0].textContent) + parseFloat(midi.getElementsByTagName(rootElement)[0].children[j].children[1].textContent)
 				};
 			output[j].push(obj);
 		}
 		j = j + 1;
 	}	
-	console.log(notes);
-	console.log(midiValues);
-	console.log(midiValuesNotes);
+	// console.log(notes);
+	// console.log(midiValues);
+	// console.log(midiValuesNotes);
 	return output;
 }
 
@@ -93,7 +108,7 @@ function getData(time, value, beginTime, endTime){
 		data.push(dataTemp)
 	}
 	this.time = newTime;
-	console.log(data);
+	// console.log(data);
 	return data;
 }
 
@@ -110,8 +125,8 @@ function filter(data, timelaps){
 }
 
 function getDataSet(label, midi){
-	console.log(midi);
-	console.log(label);
+	// console.log(midi);
+	// console.log(label);
 	var data = [];
 	midiData = [];
 	var i = 0;
@@ -122,7 +137,7 @@ function getDataSet(label, midi){
 		i = i + 1;
 	}
 	i = 0;
-	console.log(midiData)
+	// console.log(midiData)
 	while(i < label.length){
 		if(label[i].length > 10){
 			var obj = {data: label[i], radius:0, borderColor: "#3e95cd",fill: false};
@@ -130,12 +145,13 @@ function getDataSet(label, midi){
 		}
 		i = i + 1;
 	}
-	console.log(data);
+	// console.log(data);
 	return data;
 }
 
 function generateDataSet(midiFileT, beginTime, endTime, file, takeEvery){
 	var midi = transformMitiToArray(midiFileT, beginTime, endTime)
+	file = file.replace(/\n/ig, '').replace( /\s\s+/g, ' ' );
 	var line = file.split(" ");
 	
 	var lineTemp = line.filter(function(li){
@@ -143,6 +159,7 @@ function generateDataSet(midiFileT, beginTime, endTime, file, takeEvery){
 			return li;
 		}
 	});
+
 	var i = -1;
 	var time = lineTemp.filter(function(li){
 		i = i + 1;
@@ -197,7 +214,7 @@ var myChart = new Chart(ctx, {
 		}]
     }
 });
-console.log(myChart);
+// console.log(myChart);
 var activePoint = null;
 
 var yInput = document.getElementById("edit-y");
@@ -216,12 +233,18 @@ chartTimeb.value = beginTimeOr;
 chartTimee.value = endTimeOr;
 
 
+function recalculateNoChartUpdate(){
+	midiValues = [];
+	var dataset4 = generateDataSet(midiFile, parseFloat(chartTimeb.value), parseFloat(chartTimee.value), file, takeEveryOr);
+	myChart.update();
+	updateNotesBar();
+}
 
 function recalculateDateSet(){
 	midiValues = [];
 	//nie pytac dziala...
 	var dataset4 = generateDataSet(midiFile, parseFloat(chartTimeb.value), parseFloat(chartTimee.value), file, takeEveryOr);
-	console.log(dataset4);
+	// console.log(dataset4);
 	dataset = dataset4
 	myChart = new Chart(ctx, {
   type: 'scatter',
@@ -267,7 +290,7 @@ function updateNotesBar(){
 }
 
 function pointNote(id){
-	console.log(id);
+	// console.log(id);
 	var notesBar = document.getElementById("notes-bar");
 	if(id>0){
 		var prevNote = notesBar.childNodes[id-1];
@@ -279,28 +302,28 @@ function pointNote(id){
 	}
 }
 
-function deleteMidi(selectedValue){
-	dataset.splice(selectedValue, 1);
-	midiValues.splice(selectedValue , 1);
-	midiValuesNotes.splice(selectedValue , 1);
-	updateNotesBar();
-	
-
-}
-
 function deleteMidi(){
 	if(selectedValue >= 0){
+		console.log(midiFile)
 		dataset.splice(selectedValue, 1);
 		midiValues.splice(selectedValue, 1);
+		notes.splice(selectedValue, 1);
+		midiData.splice(selectedValue, 1);
+		var child = midiFile.getElementsByTagName(rootElement)[0].children[selectedValue];
+		midiFile.documentElement.removeChild(child);
+		//console.log(midiFile)
 		midiValuesNotes.splice(selectedValue , 1);
 		yInput.value = dataset[selectedValue].data[0].y;
-			midiv.value = midiValues[selectedValue];
-			midib.value = dataset[selectedValue].data[0].x;
-			midie.value = dataset[selectedValue].data[1].x;
+		midiv.value = midiValues[selectedValue];
+		midib.value = dataset[selectedValue].data[0].x;
+		midie.value = dataset[selectedValue].data[1].x;
 		dataset[selectedValue].borderColor = orangeColor;
+		//recalculateDateSet();
+		saveChanges();
 		myChart.update();
 		//resetActivePoint();
 		updateNotesBar()
+		//recalculateDateSet();
 	}
 }
 
@@ -349,7 +372,7 @@ function splitMidi(){
 		myChart.update();
 		//resetActivePoint();
 		updateNotesBar();
-		
+		recalculateNoChartUpdate();
 	}
 }
 function addMidiBefore(){
@@ -362,8 +385,10 @@ function addMidiBefore(){
 		dataset.splice( (selectedValue ), 0, obj);
 		midiValues.splice( (selectedValue ), 0, midiValues[selectedValue]);
 		midiValuesNotes.splice( (selectedValue +1), 0, midiValues[selectedValue]);
+		saveChanges();
 		myChart.update();
 		updateNotesBar();
+		recalculateNoChartUpdate();
 	}
 }
 
@@ -377,8 +402,10 @@ function addMidiAfter(){
 		dataset.splice( (selectedValue + 1), 0, obj);
 		midiValues.splice( (selectedValue + 1), 0, midiValues[selectedValue]);
 		midiValuesNotes.splice( (selectedValue +1), 0, midiValues[selectedValue]);
+		saveChanges();
 		myChart.update();
 		updateNotesBar();
+		recalculateNoChartUpdate();
 	}
 }
 
@@ -451,7 +478,16 @@ ctx.onclick = function(evt){
 	myChart.update();
 };
 
+
+function stopOriginAudio(){
+	console.log('stop audio player');
+	var doublePlay = document.getElementById('double-sound').checked;
+	if (doublePlay){
+		document.getElementById('audio-player').load();
+	}
+}
 function stopMidi(){
+	stopOriginAudio();
 	pause = false;
 	play = false;
 	var button = document.getElementById("play-button").src = "img/play.png";
@@ -463,9 +499,12 @@ function stopMidi(){
 }
 
 function playMidi(){
-
+	var doublePlay = document.getElementById('double-sound').checked;
 	// Odtwarzanie jest zapauzowane 
 	if(play && pause) {
+		if (doublePlay){
+			document.getElementById('audio-player').play();
+		}
 	    audioContext.resume().then(function() {
 	    	pause = false;
 	      	//audioChecker(1000);
@@ -475,6 +514,9 @@ function playMidi(){
 	// Nagranie jest odtwarzane, chcemy dać pauzę
 	else if(play && !pause){
 		pause = true;
+		if (doublePlay){
+			document.getElementById('audio-player').pause();
+		}
 	  	audioContext.suspend().then(function() {
       		button.src = "img/resume.png";
     	});
@@ -514,6 +556,7 @@ function playMidi(){
 
 				if(i===maxI){
 					o.onended = function() {
+						stopOriginAudio();
 						id += 1;
 						play = false;
 						pause = false;
@@ -526,6 +569,11 @@ function playMidi(){
 				
 			}
 			play = !play;
+			if (doublePlay){
+				var player = document.getElementById('audio-player');
+				//player.currentTime = beginTime;
+				player.play();
+			}
 			//audioChecker(1000);
 	}
 }
@@ -566,10 +614,30 @@ function saveChanges(){
 function saveToFile(){
 	//console.log(new XMLSerializer().serializeToString(midiFile));(new XMLSerializer()).serializeToString(midiFile);
 	var file = new Blob([new XMLSerializer().serializeToString(midiFile)], {type: "text/xml"});
-	saveAs(file,"test.xml");
+	saveAs(file, rootElement.toString() + ".xml");
 }
 
-function scalePlus(){
+function saveCsvToFile(){
+	var i = 0;
+	var maxI = midiData.length - 1;
+	// console.log(maxI);
+	var csv = [];
+	while (i < maxI){
+		_time = parseFloat(midiData[i].data[1].x - midiData[i].data[0].x).toFixed(2);
+		var _note = note(midiValuesNotes[i])
+		csv[i] = _note.toString() + '\t' + _time.toString();
+		i++;
+	}
+	csv = csv.join('\n');
+
+	var contentType = 'text/csv';
+	var csvFile = new Blob([csv], {type: contentType});
+
+	//console.log(new XMLSerializer().serializeToString(midiFile));(new XMLSerializer()).serializeToString(midiFile);
+	saveAs(csvFile, rootElement.toString() + ".csv");
+}
+
+function scaleMinus(){
 	if (parseFloat(chartTimeb.value) > 0.5){
 		chartTimeb.value = parseFloat(chartTimeb.value) - 0.5;
 		chartTimee.value = parseFloat(chartTimee.value) + 0.5;
@@ -580,7 +648,7 @@ function scalePlus(){
 	recalculateDateSet()
 }
 
-function scaleMinus(){
+function scalePlus(){
 	chartTimeb.value = parseFloat(chartTimeb.value) + 0.5;
 	chartTimee.value = parseFloat(chartTimee.value) - 0.5;
 	recalculateDateSet()
@@ -651,7 +719,7 @@ function handleFileSelect(evt) {
 			var res = event.target.result;
 			midiFile = parser.parseFromString(res,"text/xml");
 			start();
-			document.getElementById("input-xml").remove();
+			//document.getElementById("input-xml").remove();
 		};
 		reader.readAsText(f);
 	}else if(evt.dataTransfer.files[0].type === 'text/plain'){
@@ -660,7 +728,7 @@ function handleFileSelect(evt) {
 		reader.onload = function(event) {
 			file = event.target.result;
 			start();
-			document.getElementById("input-plane").remove();
+			//document.getElementById("input-plane").remove();
 		};
 		reader.readAsText(f);
 		start();
@@ -691,7 +759,6 @@ function changeEventHandler(evt){
 		start();
 	}
 }
-
 
 function start(){
 	if(file != "" && midiFile != ""){
@@ -735,9 +802,22 @@ function note(value){
     return "¯\\_(ツ)_/¯";
 }
 
+function loadSong(){
+	var player = document.getElementById('audio-player');
+	player.src = fileMP3Addr;
+	//
+	chartTimee.value = 10;
+	recalculateDateSet();
+}
+
+
+window.addEventListener('load', function() {
+	loadSong();
+    console.log('loading complete')
+})
 // Setup the dnd listeners.
 var dropZone = document.getElementById('myChart');
 var loadFiles2 = document.getElementById('loadFiles');
 dropZone.addEventListener('dragover', handleDragOver, false);
 dropZone.addEventListener('drop', handleFileSelect, false);
-loadFiles2.addEventListener('DOMContentLoaded',changeEventHandler, false);
+// loadFiles2.addEventListener('DOMContentLoaded',changeEventHandler, false);

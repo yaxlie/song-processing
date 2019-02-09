@@ -6,6 +6,7 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 		<script src="FileSaver.js"></script>
+		<script src="jquery-3.3.1.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css">
 		
@@ -17,11 +18,17 @@
 		</div>
 		
 		
-		<div class="wrapper">
-			<canvas id="myChart" width="1600" height="900"></canvas>
-		</div>
-		<div id="input-plane" style="color:red;">Nie ma pliku z przebiegiem funkcji</div>
-		<div id="input-xml" style="color:red;">Nie ma pliku xml z midi</div>
+		<table align="center">
+			<tbody>
+				<tr>
+					<td>
+						<div class="wrapper">
+							<canvas id="myChart" width="1600" height="900"></canvas>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 		<table align="center">
 			<tbody>
 			<tr>
@@ -33,11 +40,9 @@
 			<td>time begin:<br><input onchange="recalculateDateSet()" id="chart-time-begin" value="Out of order"/></td>
 			<td>time   end:<br><input onchange="recalculateDateSet()" id="chart-time-end" value="Out of order"/></td>
 			<td>Override midi:<br><input type="checkbox" id="override-midi"></td>
-			<input id="loadFiles" type="file" accept=".xml" onchange="changeEventHandler(event)"/>
-			<input id="loadFiles" type="file" accept=".txt" onchange="changeEventHandler(event)"/>
 			</tr>
 			</tbody>
-			</table>
+		</table>
 			
 		<div class="footer">
 			
@@ -54,8 +59,8 @@
 					<input id="play-button" class="button" type="image" src="img/play.png"  onclick="playMidi()"/>
 					<input class="button" type="image" src="img/left.png" onClick="goLeft()"/>
 					<input class="button" type="image" src="img/right.png" onClick="goRight()"/> -->
-					<input class="button" type="image" src="img/midi_right.png" onClick="nextMidi()"/>
 					<input class="button" type="image" src="img/midi_left.png" onClick="prevMidi()"/>
+					<input class="button" type="image" src="img/midi_right.png" onClick="nextMidi()"/>
 					<input class="button" type="image" src="img/down.png" onclick="appyMidiValue(-1)" />
 					<input class="button" type="image" src="img/up.png" onclick="appyMidiValue(1)" />
 					</br>
@@ -70,6 +75,12 @@
 					<input id="play-button" class="button" type="image" src="img/play.png"  onclick="playMidi()"/>
 					<script src="script.js"></script>
 					</br>
+						<audio controls id="audio-player">
+							Your browser does not support the audio element.
+						</audio>
+					<br><b style="color: white">Dual soundtrack</b>
+						<input type="checkbox" id="double-sound" name="double-sound" value="play both">
+					</br>
 			<!--<button id="apply-changes" onclick="nextMidi()">Next Midi</button>
 			<button id="apply-changes" onclick="prevMidi()">Prev Midi</button>
 			<button id="apply-changes" onclick="addMidiBefore()">Add Midi Before</button>
@@ -78,6 +89,7 @@
 				</div>
 				<div style="width: 34%; float:left;" class="mpanel">
 					<p style="color:white">Chart/File</p>
+					<input class="button" type="image" src="img/save_csv.png" onclick="saveCsvToFile()" />
 					<input class="button" type="image" src="img/save.png" onclick="saveToFile()" />
 					<input class="button" type="image" src="img/zoom_in.png" onclick="scalePlus()" />
 					<input class="button" type="image" src="img/zoom_out.png" onclick="scaleMinus()" />
