@@ -1,7 +1,7 @@
 var contentUrl = 'https://raw.githubusercontent.com/Fehu4/Kik/master/TP0052B_01.mp3';
 var root=contentUrl.split("/")
 var rootEl=root[root.length-1]
-var rootElement = "BLE"
+var rootElement = "Song_" + rootEl.replace(".mp3","")
 console.log(rootElement)
 file = "";
 midiFile = "";
@@ -815,6 +815,7 @@ function note(value){
 }
 
 function loadSong(title){
+	rootElement = title
 	// .xml
 	$.get('songs/' + title + '/' + title + '.xml', function(response_xml) {
     	var file_xml = response_xml;
