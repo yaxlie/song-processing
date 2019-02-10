@@ -1,7 +1,7 @@
 var contentUrl = 'https://raw.githubusercontent.com/Fehu4/Kik/master/TP0052B_01.mp3';
 var root=contentUrl.split("/")
 var rootEl=root[root.length-1]
-var rootElement = "Song_" + rootEl.replace(".mp3","")
+var rootElement = "BLE"
 console.log(rootElement)
 file = "";
 midiFile = "";
@@ -802,17 +802,43 @@ function note(value){
     return "¯\\_(ツ)_/¯";
 }
 
-function loadSong(){
-	var player = document.getElementById('audio-player');
-	player.src = fileMP3Addr;
-	//
-	chartTimee.value = 10;
-	recalculateDateSet();
+					function loadSongsList(){
+	$.get('songs/list', function(response) {
+			var list = response;
+			var lines = list.split('\n');
+			for(var i = 0; i < lines.length; i++){
+			    song = lines[i].trim();;
+			    var listNode = document.getElementById("file-list");
+				listNode.innerHTML += '<br><button class="song-button" style="width:20vh;" onclick="loadSong(\'' + song + '\')">' + song + '</button>';
+			}
+		});
+}
+
+function loadSong(title){
+	// .xml
+	$.get('songs/' + title + '/' + title + '.xml', function(response_xml) {
+    	var file_xml = response_xml;
+    	midiFile = file_xml;
+    	//console.log(.documentElement);
+    	//console.log(midiFile);
+		// .txt
+		$.get('songs/' + title + '/' + title + '.txt', function(response_txt) {
+			// .mp3
+			var player = document.getElementById('audio-player');
+			player.src = 'songs/' + title + '/' + title + '.mp3';
+			//
+	    	var file_txt = response_txt;
+	    	//console.log(file);
+	    	file = file_txt;
+	    	chartTimee.value = 10;
+	    	recalculateDateSet();
+		});
+	});
 }
 
 
 window.addEventListener('load', function() {
-	loadSong();
+	loadSongsList();
     console.log('loading complete')
 })
 // Setup the dnd listeners.
