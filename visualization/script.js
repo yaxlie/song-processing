@@ -621,8 +621,16 @@ function saveToFile(){
 }
 
 function saveAsMidi(){
-	console.log(durations)
-	console.log(notes)
+	// console.log(durations)
+	// console.log(notes)
+
+	var notes = []
+	var durations = []
+
+	Array.prototype.forEach.call(midiFile.getElementsByTagName(rootElement)[0].children, child => {
+		durations.push(child.children[1].textContent);
+		notes.push(child.children[4].textContent);
+	});
 
 	$.getScript("midi-generator.js", function() {
 		generateMidi(notes, durations)
